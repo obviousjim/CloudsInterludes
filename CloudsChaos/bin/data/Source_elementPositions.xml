@@ -1,0 +1,26 @@
+<positions>
+    <element name="Depth">
+        <x>0</x>
+        <y>50</y>
+        <width>1920</width>
+        <height>75</height>
+    </element>
+    <element name="Edge Snip">
+        <x>0</x>
+        <y>365</y>
+        <width>1920</width>
+        <height>75</height>
+    </element>
+    <element name="Simplify">
+        <x>0</x>
+        <y>155</y>
+        <width>1920</width>
+        <height>75</height>
+    </element>
+    <element name="Z Threshold">
+        <x>0</x>
+        <y>260</y>
+        <width>1920</width>
+        <height>75</height>
+    </element>
+</positions>
