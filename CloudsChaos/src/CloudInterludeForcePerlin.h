@@ -9,6 +9,33 @@
 #ifndef CloudsInterlude_CloudInterludeForcePerlin_h
 #define CloudsInterlude_CloudInterludeForcePerlin_h
 
-
+#include "CloudInterludeForce.h"
+class CloudInterludeForcePerlin : public CloudInterludeForce {
+  public:
+    float amplitude;
+    float density;
+    float speed;
+    float currentOffset;
+    
+    CloudInterludeForcePerlin() {
+        amplitude = 0;
+        density = 0;
+        speed = 0;
+        currentOffset = 0;
+    }
+    
+    void applyForce(vector<CloudInterludeParticle>& particles){
+        currentOffset += speed;
+        for(int i = 0; i < particles.size(); i++){
+            ofVec3f& pos = particles[i].position;
+//            particles[i].force +=  ofVec3f(ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset)*amplitude,
+//                                           ofSignedNoise(pos.z/density, pos.x/density, pos.y/density, currentOffset)*amplitude,
+//                                           ofSignedNoise(pos.y/density, pos.z/density, pos.x/density, currentOffset)*amplitude );
+            particles[i].force +=  ofVec3f(ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset)*amplitude,
+                                           ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+10000)*amplitude,
+                                           ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+20000)*amplitude );
+        }
+    }
+};
 
 #endif

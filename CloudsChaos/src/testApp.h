@@ -9,6 +9,7 @@
 #include "ofxTLDepthImageSequence.h"
 #include "CloudInterludeParticleGenerator.h"
 #include "CloudInterludeForcePerlin.h"
+#include "CloudInterludeForceDrag.h"
 
 class testApp : public ofBaseApp
 {
@@ -41,5 +42,6 @@ class testApp : public ofBaseApp
     //forces
     CloudInterludeParticleGenerator generator;
     CloudInterludeForcePerlin* perlinForce;
+    CloudInterludeForceDrag* dragForce;
     
 };

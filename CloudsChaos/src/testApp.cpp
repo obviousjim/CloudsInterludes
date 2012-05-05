@@ -36,8 +36,14 @@ void testApp::setup(){
     timeline.addKeyframes("Edge Snip", "edgesnip.xml", ofRange(0, sqrtf(2000) ), sqrtf(2000));
         
     timeline.addPage("Particles");
-    timeline.addKeyframes("Birthrate", "particleBirthrate.xml", ofRange(.1, sqrtf(20)) );
+    timeline.addKeyframes("Birthrate", "particleBirthrate.xml", ofRange(.1, sqrtf(100)) );
     timeline.addKeyframes("Lifespan", "particleLifespan.xml", ofRange(100, 2000));
+    timeline.addKeyframes("Drag Force", "particleDragFroce.xml", ofRange(0, 1.0), 0);
+    
+    timeline.addPage("Perlin");
+    timeline.addKeyframes("Perlin Amplitude", "perlinAmplitude.xml", ofRange(1, sqrtf(200)) );
+    timeline.addKeyframes("Perlin Density", "perlinDensity.xml", ofRange(100, sqrtf(2000)));
+    timeline.addKeyframes("Perlin Speed", "perlinSpeed.xml", ofRange(0, sqrtf(40)), 0);
     
     timeline.setCurrentPage(0);
     
@@ -61,17 +67,16 @@ void testApp::setup(){
         debugNodes.push_back( n );
     }
     
-    
     //setup forces
-    perlinForce = new CloudInterludeForcePerlin(renderer.getMesh());
-    perlinForce->amplitude = 2;
-    perlinForce->density = 400;
-    perlinForce->speed = 10;
-    
+    perlinForce = new CloudInterludeForcePerlin();
+    dragForce = new CloudInterludeForceDrag();
+
+    generator.addForce(perlinForce);
+    generator.addForce(dragForce);
+
     generator.position = ofVec3f(0,0,0);
     generator.direction = ofVec3f(0,0,1);
-    
-    generator.addForce(perlinForce);
+
 }
 
 //--------------------------------------------------------------
@@ -82,8 +87,15 @@ void testApp::update(){
     
     
     //GENERATOR
-    generator.birthRate = timeline.getKeyframeValue("Birthrate");
+    generator.birthRate = powf(timeline.getKeyframeValue("Birthrate"), 2);
     generator.lifespan = timeline.getKeyframeValue("Lifespan");
+    dragForce->dragForce = powf( timeline.getKeyframeValue("Drag Force"), 2.0);
+    
+    perlinForce->amplitude = powf( timeline.getKeyframeValue("Perlin Amplitude"), 2.0);
+    perlinForce->density = powf( timeline.getKeyframeValue("Perlin Density"), 2.0);
+    perlinForce->speed = powf( timeline.getKeyframeValue("Perlin Speed"), 2.0);
+
+    
     generator.update();
     
     //RENDERER
