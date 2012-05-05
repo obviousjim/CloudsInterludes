@@ -11,17 +11,15 @@
 #include "CloudInterludeForce.h"
 class CloudInterludeForceDrag : public CloudInterludeForce {
   public:
-
     float dragForce;
-    
     CloudInterludeForceDrag() {
         dragForce = 1.0;
     }
     
     void applyForce(vector<CloudInterludeParticle>& particles){
-        float oneMinusDrag = (1.0 - dragForce);
+        //float oneMinusDrag = (1.0 - dragForce);
         for(int i = 0; i < particles.size(); i++){
-            particles[i].velocity *= oneMinusDrag;
+            particles[i].velocity -= (particles[i].direction * dragForce);
         }
     }
 };

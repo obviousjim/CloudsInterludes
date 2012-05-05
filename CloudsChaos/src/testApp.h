@@ -10,6 +10,7 @@
 #include "CloudInterludeParticleGenerator.h"
 #include "CloudInterludeForcePerlin.h"
 #include "CloudInterludeForceDrag.h"
+#include "CloudInterludeForceMeshAttractor.h"
 
 class testApp : public ofBaseApp
 {
@@ -41,7 +42,9 @@ class testApp : public ofBaseApp
     
     //forces
     CloudInterludeParticleGenerator generator;
+    //vector<CloudInterludeParticleGenerator> emmiters;
     CloudInterludeForcePerlin* perlinForce;
     CloudInterludeForceDrag* dragForce;
+    CloudInterludeForceMeshAttractor* meshForce;
     
 };

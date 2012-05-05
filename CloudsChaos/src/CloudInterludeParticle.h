@@ -18,19 +18,27 @@ class CloudInterludeParticle {
         position = ofVec3f(0,0,0);
         velocity = ofVec3f(0,0,0);
         force = ofVec3f(0,0,0);
+        connectorEnergy = 0;
     }
     
     void update(){
         velocity += force;
         position += velocity;
+        direction = velocity.getNormalized();
         force = ofVec3f(0,0,0);
         energy--;
+        connectorEnergy = MAX(connectorEnergy-1, 0);
     }
+    
+    ofVec3f connectorPoint;
+    float connectorEnergy;
     
     float energy;
     ofVec3f position;
     ofVec3f velocity;
     ofVec3f force;
+    
+    ofVec3f direction;
     
 };
 

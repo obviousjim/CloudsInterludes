@@ -32,8 +32,8 @@ class CloudInterludeForcePerlin : public CloudInterludeForce {
 //                                           ofSignedNoise(pos.z/density, pos.x/density, pos.y/density, currentOffset)*amplitude,
 //                                           ofSignedNoise(pos.y/density, pos.z/density, pos.x/density, currentOffset)*amplitude );
             particles[i].force +=  ofVec3f(ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset)*amplitude,
-                                           ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+10000)*amplitude,
-                                           ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+20000)*amplitude );
+                                           ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+1000)*amplitude,
+                                           ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset+2000)*amplitude );
         }
     }
 };

@@ -44,13 +44,10 @@ class CloudInterludeParticleGenerator {
                 particles.erase(particles.begin() + i); 
             }
         }
-        
-        
     }
     
     void drawTextDebug(float x, float y){
         ofDrawBitmapString("Num Particles " + ofToString(particles.size()), x, y);
-                           
     }
     
     void drawDebug(){
@@ -69,8 +66,12 @@ class CloudInterludeParticleGenerator {
         for(int i = 0; i < particles.size(); i++){
             m.addVertex(particles[i].position);
 //            m.addColor(ofFloatColor(particles[i].energy/lifespan));
+            if(particles[i].connectorEnergy > 0){
+                ofLine(particles[i].position, particles[i].connectorPoint);
+            }
         }
         m.drawVertices();
+        
        // m.drawWireframe();
         ofPopStyle();
     

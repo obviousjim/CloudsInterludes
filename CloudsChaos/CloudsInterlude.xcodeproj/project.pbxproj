@@ -264,6 +264,7 @@
 		A6477C79149D679300908B2B /* ofxRGBDRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxRGBDRenderer.h; sourceTree = "<group>"; };
 		A659ED10148A7CA9002E8A1C /* ofxTLColors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTLColors.cpp; sourceTree = "<group>"; };
 		A659ED11148A7CA9002E8A1C /* ofxTLColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTLColors.h; sourceTree = "<group>"; };
+		A664F50F1554D6E600D80EF3 /* CloudInterludeForceMeshAttractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudInterludeForceMeshAttractor.h; sourceTree = "<group>"; };
 		A6A315B515548137003D7222 /* CloudInterludeParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudInterludeParticle.h; sourceTree = "<group>"; };
 		A6A315B61554884F003D7222 /* ofxRGBDMediaTake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxRGBDMediaTake.h; sourceTree = "<group>"; };
 		A6A315BA1554886E003D7222 /* ofxRGBDRenderSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxRGBDRenderSettings.cpp; sourceTree = "<group>"; };
@@ -971,6 +972,7 @@
 				A6A315C01554AB2E003D7222 /* CloudInterludeForce.h */,
 				A6A315C11554B97E003D7222 /* CloudInterludeForcePerlin.h */,
 				A6A315C21554CC35003D7222 /* CloudInterludeForceDrag.h */,
+				A664F50F1554D6E600D80EF3 /* CloudInterludeForceMeshAttractor.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

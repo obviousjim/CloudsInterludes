@@ -45,7 +45,12 @@ void testApp::setup(){
     timeline.addKeyframes("Perlin Density", "perlinDensity.xml", ofRange(100, sqrtf(2000)));
     timeline.addKeyframes("Perlin Speed", "perlinSpeed.xml", ofRange(0, sqrtf(40)), 0);
     
+    timeline.addPage("Attractors");
+    timeline.addKeyframes("Mesh Attract", "meshAttractScale.xml", ofRange(0, 2000));
+    timeline.addKeyframes("Min Radius", "meshMinRadius.xml", ofRange(0, 6000));
+
     timeline.setCurrentPage(0);
+    
     
     ofxXmlSettings defaults;
     defaults.loadFile("defaults.xml");
@@ -70,10 +75,13 @@ void testApp::setup(){
     //setup forces
     perlinForce = new CloudInterludeForcePerlin();
     dragForce = new CloudInterludeForceDrag();
-
+    meshForce = new CloudInterludeForceMeshAttractor();
+    meshForce->mesh = &renderer.getMesh();
+    
     generator.addForce(perlinForce);
     generator.addForce(dragForce);
-
+    generator.addForce(meshForce);
+    
     generator.position = ofVec3f(0,0,0);
     generator.direction = ofVec3f(0,0,1);
 
@@ -95,7 +103,8 @@ void testApp::update(){
     perlinForce->density = powf( timeline.getKeyframeValue("Perlin Density"), 2.0);
     perlinForce->speed = powf( timeline.getKeyframeValue("Perlin Speed"), 2.0);
 
-    
+    meshForce->minRadius = timeline.getKeyframeValue("Min Radius");
+    meshForce->attractScale = timeline.getKeyframeValue("Mesh Attract");
     generator.update();
     
     //RENDERER
