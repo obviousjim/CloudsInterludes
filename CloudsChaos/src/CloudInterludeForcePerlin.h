@@ -26,6 +26,7 @@ class CloudInterludeForcePerlin : public CloudInterludeForce {
     
     void applyForce(vector<CloudInterludeParticle>& particles){
         currentOffset += speed;
+        currentOffset = 0;
         for(int i = 0; i < particles.size(); i++){
             ofVec3f& pos = particles[i].position;
 //            particles[i].force +=  ofVec3f(ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset)*amplitude,

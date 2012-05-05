@@ -17,7 +17,7 @@ class CloudInterludeParticleGenerator {
     CloudInterludeParticleGenerator(){
         birthRate = 10;
         lifespan = 200;
-        numToBear = 0;
+        numToBear = ofRandom(0,1);
         //setup forces
     }
     

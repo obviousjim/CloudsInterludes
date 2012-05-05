@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void testApp::setup(){
+    ofEnableAlphaBlending();
     ofSetFrameRate(60);
     ofBackground(30);
     
@@ -28,7 +29,7 @@ void testApp::setup(){
     timeline.setDurationInFrames(500);
     timeline.setOffset(ofVec2f(0,0));
     
-    int absoluteMaxParticles = 100000;
+    int absoluteMaxParticles = 1000000;
     depthImages.setup();
     timeline.setPageName("Source");
     timeline.addElement("Depth", &depthImages);
@@ -37,15 +38,15 @@ void testApp::setup(){
     timeline.addKeyframes("Edge Snip", "edgesnip.xml", ofRange(0, sqrtf(2000) ), sqrtf(2000));
         
     timeline.addPage("Particles");
-    timeline.addKeyframes("Max Particles", "maxParticles.xml", ofRange(1000, absoluteMaxParticles) );
-    timeline.addKeyframes("Birthrate", "particleBirthrate.xml", ofRange(.1, sqrtf(10)) );
+    timeline.addKeyframes("Max Particles", "maxParticles.xml", ofRange(10, absoluteMaxParticles) );
+    timeline.addKeyframes("Birthrate", "particleBirthrate.xml", ofRange(.001, .01) );
     timeline.addKeyframes("Lifespan", "particleLifespan.xml", ofRange(2, 300) );
     timeline.addKeyframes("Lifespan Variance", "particleLifespanVariance.xml", ofRange(0, 100) );
     timeline.addKeyframes("Drag Force", "particleDragFroce.xml", ofRange(0, 1.0), 0);
     
     timeline.addPage("Perlin");
     timeline.addKeyframes("Perlin Amplitude", "perlinAmplitude.xml", ofRange(1, sqrtf(200)) );
-    timeline.addKeyframes("Perlin Density", "perlinDensity.xml", ofRange(100, sqrtf(2000)));
+    timeline.addKeyframes("Perlin Density", "perlinDensity.xml", ofRange(0, sqrtf(2000)));
     timeline.addKeyframes("Perlin Speed", "perlinSpeed.xml", ofRange(0, sqrtf(5)), 0);
     
     timeline.addPage("Attractors");
@@ -120,8 +121,8 @@ void testApp::update(){
     meshForce->attractScale = timeline.getKeyframeValue("Mesh Attract");
 
     //GENERATOR
-    float birthRate = powf(timeline.getKeyframeValue("Birthrate"), 2);
-    float lifeSpan = timeline.getKeyframeValue("Lifespan");
+    float birthRate = timeline.getKeyframeValue("Birthrate");
+    float lifeSpan  = timeline.getKeyframeValue("Lifespan");
     float lifeSpanVariance = timeline.getKeyframeValue("Lifespan Variance");
     int maxParticles = timeline.getKeyframeValue("Max Particles");
     
@@ -130,6 +131,11 @@ void testApp::update(){
 //    }
 
     totalParticles = 0;
+    for(int i = 0; i < emmiters.size(); i++){
+    	emmiters[i].birthRate = 0;
+        totalParticles += emmiters[i].particles.size();
+    }
+
     for(int i = 0; i < renderer.getTotalPoints(); i++){
         CloudInterludeParticleGenerator& g = emmiters[i];
         bool valid = renderer.isVertexValid(i);
@@ -140,11 +146,12 @@ void testApp::update(){
             g.lifespanVariance = lifeSpanVariance;
             g.position = renderer.getMesh().getVertex( renderer.vertexIndex(i) );
             g.remainingParticles = maxParticles - totalParticles;
+            //g.remainingParticles = maxParticles - g.particles.size();
         }
-        else{
-            g.birthRate = 0;
-        }
-        g.update();
+    }
+    
+    for(int i = 0; i < emmiters.size(); i++){
+    	emmiters[i].update();
     }
     
     //put the particles in the mesh;
@@ -253,11 +260,17 @@ void testApp::copyVertsToMesh(){
             float color = emmiters[i].particles[v].energy / emmiters[i].particles[v].initialEnergy;
             meshColors[meshIndex] = ofFloatColor(color,color,color,color);
             meshIndex++;
-//            if(meshIndex == meshVertices.size()){
-//                return;
-//            }
+            if(meshIndex == meshVertices.size()){
+                ofLogError("exceeded max particles");
+                return;
+            }
         }
     }
+	
+    memset(&(meshColors[meshIndex].r), 0, sizeof(ofFloatColor)*(meshColors.size()-meshIndex));
+//    for(int i = meshIndex; i < meshVertices.size(); i++){
+//        
+//    }
 }
 
 //--------------------------------------------------------------
@@ -290,6 +303,12 @@ void testApp::keyPressed(int key){
     
     if(key == 'R'){
         cam.reset();
+    }
+    
+    if(key == 'K'){
+        for(int i = 0; i < emmiters.size(); i++){
+        	emmiters[i].particles.clear();
+        }
     }
 }
 
