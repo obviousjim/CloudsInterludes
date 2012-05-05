@@ -34,6 +34,8 @@ class CloudInterludeParticle {
     float connectorEnergy;
     
     float energy;
+    float initialEnergy;
+    ofVec3f origin;
     ofVec3f position;
     ofVec3f velocity;
     ofVec3f force;

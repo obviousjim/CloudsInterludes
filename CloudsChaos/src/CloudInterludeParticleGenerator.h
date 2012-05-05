@@ -24,13 +24,14 @@ class CloudInterludeParticleGenerator {
     void update(){
         
         numToBear += birthRate;
-        while(numToBear > 1.0){
+        while(numToBear > 1.0 && remainingParticles > 0){
             CloudInterludeParticle p;
-            p.energy = lifespan;
-            p.position = position;
+            p.energy = p.initialEnergy = lifespan + ofRandom(-lifespanVariance/2, lifespanVariance/2);
+            p.origin = p.position = position;
             p.velocity = direction;
             particles.push_back(p);
             numToBear--;
+            remainingParticles--;
         }
         
         for(int i = 0; i < forces.size(); i++){
@@ -59,6 +60,7 @@ class CloudInterludeParticleGenerator {
         ofPopStyle();
     }
     
+    /*
     void drawParticleDebug(){
         ofPushStyle();
         glPointSize(4);
@@ -66,16 +68,16 @@ class CloudInterludeParticleGenerator {
         for(int i = 0; i < particles.size(); i++){
             m.addVertex(particles[i].position);
 //            m.addColor(ofFloatColor(particles[i].energy/lifespan));
-            if(particles[i].connectorEnergy > 0){
-                ofLine(particles[i].position, particles[i].connectorPoint);
-            }
+//            if(particles[i].connectorEnergy > 0){
+//                ofLine(particles[i].position, particles[i].connectorPoint);
+//            }
         }
         m.drawVertices();
         
        // m.drawWireframe();
         ofPopStyle();
-    
     }
+     */
     
     vector<CloudInterludeParticle> particles;
     vector<CloudInterludeForce*> forces;
@@ -84,8 +86,10 @@ class CloudInterludeParticleGenerator {
         forces.push_back(force);
     }
     
+    int remainingParticles;
     float birthRate;
     float lifespan;
+    float lifespanVariance;
     ofVec3f position;
     ofVec3f direction;
     

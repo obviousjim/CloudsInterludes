@@ -29,6 +29,10 @@ class testApp : public ofBaseApp
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
+    void copyVertsToMesh();
+    void debugDrawOrigins();
+    void initializeMesh();
+    
     ofxTimeline timeline;
     
     ofFbo renderTarget;
@@ -41,10 +45,13 @@ class testApp : public ofBaseApp
     ofRectangle fboRect;
     
     //forces
-    CloudInterludeParticleGenerator generator;
-    //vector<CloudInterludeParticleGenerator> emmiters;
+    //CloudInterludeParticleGenerator generator;
+    vector<CloudInterludeParticleGenerator> emmiters;
     CloudInterludeForcePerlin* perlinForce;
     CloudInterludeForceDrag* dragForce;
     CloudInterludeForceMeshAttractor* meshForce;
+
+    int totalParticles;
     
+    ofVboMesh mesh;
 };
