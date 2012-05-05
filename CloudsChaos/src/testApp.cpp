@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void testApp::setup(){
     ofSetFrameRate(60);
-    ofBackground(100);
+    ofBackground(30);
     
     ofToggleFullscreen();
     
@@ -14,11 +14,15 @@ void testApp::setup(){
     
     cam.setup();
     cam.usemouse = true;
-    cam.loadCameraPosition();
     cam.autosavePosition = true;
     cam.speed = 20;
     cam.setScale(1, -1, 1);
     cam.targetNode.setScale(1, -1, 1);
+    cam.loadCameraPosition();
+	cam.maximumY =  120;
+	cam.minimumY = -120;
+	cam.rollSpeed = 1;
+    cam.loadCameraPosition();
     
     timeline.setup();
     timeline.setDurationInFrames(500);
@@ -30,10 +34,12 @@ void testApp::setup(){
     timeline.addKeyframes("Simplify", "zthreshold.xml", ofRange(0, 8 ), 2);
     timeline.addKeyframes("Z Threshold", "zthreshold.xml", ofRange(0, sqrtf(5000) ), sqrtf(5000));
     timeline.addKeyframes("Edge Snip", "edgesnip.xml", ofRange(0, sqrtf(2000) ), sqrtf(2000));
+        
+    timeline.addPage("Particles");
+    timeline.addKeyframes("Birthrate", "particleBirthrate.xml", ofRange(.1, sqrtf(20)) );
+    timeline.addKeyframes("Lifespan", "particleLifespan.xml", ofRange(100, 2000));
     
-//    timeline.addKeyframes("X Rot", "xrot.xml", ofRange(0, 360 ), 0);
-//    timeline.addKeyframes("Y Rot", "yrot.xml", ofRange(0, 360 ), 0);
-//    timeline.addKeyframes("Z Rot", "zrot.xml", ofRange(0, 360 ), 0);
+    timeline.setCurrentPage(0);
     
     ofxXmlSettings defaults;
     defaults.loadFile("defaults.xml");
@@ -54,17 +60,34 @@ void testApp::setup(){
                       ofRandom(-200,200) );
         debugNodes.push_back( n );
     }
+    
+    
+    //setup forces
+    perlinForce = new CloudInterludeForcePerlin(renderer.getMesh());
+    perlinForce->amplitude = 2;
+    perlinForce->density = 400;
+    perlinForce->speed = 10;
+    
+    generator.position = ofVec3f(0,0,0);
+    generator.direction = ofVec3f(0,0,1);
+    
+    generator.addForce(perlinForce);
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-    fboRect = ofRectangle(timeline.getDrawRect().x,
-                          timeline.getDrawRect().height, 1920/2, 1080/2);
-    
+    //VIEW
     cam.applyRotation = cam.applyTranslation = fboRect.inside(ofGetMouseX(),ofGetMouseY());
+    fboRect = ofRectangle(timeline.getDrawRect().x, timeline.getDrawRect().height, 1920/2, 1080/2);
     
+    
+    //GENERATOR
+    generator.birthRate = timeline.getKeyframeValue("Birthrate");
+    generator.lifespan = timeline.getKeyframeValue("Lifespan");
+    generator.update();
+    
+    //RENDERER
     bool needsUpdate = false;
-    
     renderer.farClip = powf(timeline.getKeyframeValue("Z Threshold"), 2.0);
     renderer.edgeCull = powf(timeline.getKeyframeValue("Edge Snip"), 2.0);
     if(renderer.getSimplification() != (int)timeline.getKeyframeValue("Simplify")){
@@ -83,6 +106,7 @@ void testApp::update(){
     if(needsUpdate){
         renderer.update();
     }
+    
 }
 
 //--------------------------------------------------------------
@@ -103,12 +127,23 @@ void testApp::draw(){
         //for(int i = 0; i < debugNodes.size(); i++) debugNodes[i].draw();
     }
     
+    //RENDERER
+    generator.drawDebug();
+    generator.drawParticleDebug();
+
     cam.end();
     renderTarget.end();
+    
+    ofPushStyle();
+    ofSetColor(0);
+    ofRect(fboRect);
+    ofPopStyle();
+
     renderTarget.getTextureReference().draw(fboRect); 
     
+    
+    generator.drawTextDebug(fboRect.x+fboRect.width + 10, fboRect.y+ 15);
     timeline.draw();
-
 }
 
 //--------------------------------------------------------------

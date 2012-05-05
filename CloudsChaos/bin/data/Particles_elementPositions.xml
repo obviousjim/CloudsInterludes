@@ -1,0 +1,14 @@
+<positions>
+    <element name="Birthrate">
+        <x>0</x>
+        <y>80</y>
+        <width>1920</width>
+        <height>75</height>
+    </element>
+    <element name="Lifespan">
+        <x>0</x>
+        <y>185</y>
+        <width>1920</width>
+        <height>75</height>
+    </element>
+</positions>

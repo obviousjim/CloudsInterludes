@@ -269,6 +269,10 @@
 		A6A315BA1554886E003D7222 /* ofxRGBDRenderSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxRGBDRenderSettings.cpp; sourceTree = "<group>"; };
 		A6A315BC1554887C003D7222 /* ofxRGBDRenderSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxRGBDRenderSettings.h; sourceTree = "<group>"; };
 		A6A315BD155488A2003D7222 /* ofxRGBDMediaTake.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxRGBDMediaTake.cpp; sourceTree = "<group>"; };
+		A6A315BF1554A34E003D7222 /* CloudInterludeParticleGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudInterludeParticleGenerator.h; sourceTree = "<group>"; };
+		A6A315C01554AB2E003D7222 /* CloudInterludeForce.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudInterludeForce.h; sourceTree = "<group>"; };
+		A6A315C11554B97E003D7222 /* CloudInterludeForcePerlin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudInterludeForcePerlin.h; sourceTree = "<group>"; };
+		A6A315C21554CC35003D7222 /* CloudInterludeForceDrag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudInterludeForceDrag.h; sourceTree = "<group>"; };
 		A6ECC6BB15300A820009D0D9 /* ofxDepthHoleFiller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxDepthHoleFiller.cpp; sourceTree = "<group>"; };
 		A6ECC6BC15300A820009D0D9 /* ofxDepthHoleFiller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxDepthHoleFiller.h; sourceTree = "<group>"; };
 		A6EE319D14E21B030068A5E7 /* ofxTLCameraTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTLCameraTrack.cpp; sourceTree = "<group>"; };
@@ -963,6 +967,10 @@
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				A6A315B515548137003D7222 /* CloudInterludeParticle.h */,
+				A6A315BF1554A34E003D7222 /* CloudInterludeParticleGenerator.h */,
+				A6A315C01554AB2E003D7222 /* CloudInterludeForce.h */,
+				A6A315C11554B97E003D7222 /* CloudInterludeForcePerlin.h */,
+				A6A315C21554CC35003D7222 /* CloudInterludeForceDrag.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

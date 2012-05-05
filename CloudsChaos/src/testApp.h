@@ -7,8 +7,11 @@
 
 #include "ofxTimeline.h"
 #include "ofxTLDepthImageSequence.h"
+#include "CloudInterludeParticleGenerator.h"
+#include "CloudInterludeForcePerlin.h"
 
-class testApp : public ofBaseApp{
+class testApp : public ofBaseApp
+{
   public:
     void setup();
     void update();
@@ -34,4 +37,9 @@ class testApp : public ofBaseApp{
     vector<ofNode> debugNodes;
     
     ofRectangle fboRect;
+    
+    //forces
+    CloudInterludeParticleGenerator generator;
+    CloudInterludeForcePerlin* perlinForce;
+    
 };
