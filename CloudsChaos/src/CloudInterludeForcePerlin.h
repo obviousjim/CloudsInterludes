@@ -12,6 +12,7 @@
 #include "CloudInterludeForce.h"
 class CloudInterludeForcePerlin : public CloudInterludeForce {
   public:
+    
     float amplitude;
     float density;
     float speed;
@@ -24,9 +25,12 @@ class CloudInterludeForcePerlin : public CloudInterludeForce {
         currentOffset = 0;
     }
     
-    void applyForce(vector<CloudInterludeParticle>& particles){
+    void update(){
         currentOffset += speed;
-        currentOffset = 0;
+    }
+    
+    void applyForce(vector<CloudInterludeParticle>& particles){
+        //currentOffset = 0;
         for(int i = 0; i < particles.size(); i++){
             ofVec3f& pos = particles[i].position;
 //            particles[i].force +=  ofVec3f(ofSignedNoise(pos.x/density, pos.y/density, pos.z/density, currentOffset)*amplitude,

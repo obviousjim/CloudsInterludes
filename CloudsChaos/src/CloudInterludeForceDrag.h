@@ -16,6 +16,8 @@ class CloudInterludeForceDrag : public CloudInterludeForce {
         dragForce = 1.0;
     }
     
+    void update(){};
+    
     void applyForce(vector<CloudInterludeParticle>& particles){
         //float oneMinusDrag = (1.0 - dragForce);
         for(int i = 0; i < particles.size(); i++){

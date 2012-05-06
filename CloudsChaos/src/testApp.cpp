@@ -8,10 +8,11 @@ void testApp::setup(){
     
     ofToggleFullscreen();
     
-    renderTarget.allocate(1920, 1080, GL_RGBA, 4);
+    renderTarget.allocate(1920, 1080, GL_RGB, 4);
     
     renderer.setSimplification(2);
-    //renderer.forceUndistortOff = true;
+    renderer.forceUndistortOff = true;
+    
     
     cam.setup();
     cam.usemouse = true;
@@ -25,24 +26,31 @@ void testApp::setup(){
 	cam.rollSpeed = 1;
     cam.loadCameraPosition();
     
+    currentSaveFolder = "EXPORT_" + ofToString(ofGetMonth()) + "_" + ofToString(ofGetDay()) + "_" + ofToString(ofGetHours()) + ofToString(ofGetMinutes());
+    savingImage.allocate(1920, 1080, OF_IMAGE_COLOR);
+	createdFolder = false;
+    
+    track.setCamera(cam);
+    track.setXMLFileName("cameraMoves.xml");
     timeline.setup();
+    timeline.setMovePlayheadOnDrag(false);
     timeline.setDurationInFrames(500);
     timeline.setOffset(ofVec2f(0,0));
-    
-    useShader = false;
-    
+        
     int absoluteMaxParticles = 40000;
     depthImages.setup();
     timeline.setPageName("Source");
     timeline.addElement("Depth", &depthImages);
+    timeline.addElement("Track", &track);
+    
+    timeline.addPage("Rendering");
     timeline.addKeyframes("Simplify", "zthreshold.xml", ofRange(0, 8 ), 2);
     timeline.addKeyframes("Z Threshold", "zthreshold.xml", ofRange(0, sqrtf(5000) ), sqrtf(5000));
     timeline.addKeyframes("Edge Snip", "edgesnip.xml", ofRange(0, sqrtf(2000) ), sqrtf(2000));
 
-
     timeline.addPage("Particles");
-    timeline.addKeyframes("Max Particles", "maxParticles.xml", ofRange(10, absoluteMaxParticles) );
-    timeline.addKeyframes("Birthrate", "particleBirthrate.xml", ofRange(.001, .01) );
+    timeline.addKeyframes("Max Particles", "maxParticles.xml", ofRange(0, absoluteMaxParticles) );
+    timeline.addKeyframes("Birthrate", "particleBirthrate.xml", ofRange(.000, .01) );
     timeline.addKeyframes("Lifespan", "particleLifespan.xml", ofRange(2, 300) );
     timeline.addKeyframes("Lifespan Variance", "particleLifespanVariance.xml", ofRange(0, 100) );
     timeline.addKeyframes("Drag Force", "particleDragFroce.xml", ofRange(0, 1.0), 0);
@@ -54,7 +62,7 @@ void testApp::setup(){
     timeline.addKeyframes("Max Point Size", "dofMaxPoint.xml", ofRange(10, 45));
     
     timeline.addPage("Perlin");
-    timeline.addKeyframes("Perlin Amplitude", "perlinAmplitude.xml", ofRange(0, sqrtf(200)) );
+    timeline.addKeyframes("Perlin Amplitude", "perlinAmplitude.xml", ofRange(0, sqrtf(20)) );
     timeline.addKeyframes("Perlin Density", "perlinDensity.xml", ofRange(0, sqrtf(2000)));
     timeline.addKeyframes("Perlin Speed", "perlinSpeed.xml", ofRange(0, sqrtf(5)), 0);
     
@@ -63,12 +71,21 @@ void testApp::setup(){
     timeline.addKeyframes("Min Radius", "meshMinRadius.xml", ofRange(0, 6000));
     timeline.setCurrentPage(0);
     
-//    timeline.addPage("Luminosity");
-//	timeline.addKeyframes("Lumin Mid", "Lumin Mid", <#ofRange valueRange#>)
+    panel.setup("Settings", "settings.xml");
+    panel.add(setCompDirectory.setup("load comp"));
+    panel.add(renderOutput.setup("render", false));
+    panel.add(lockToTrackToggle.setup("lock to track",false));
+    panel.add(resetCamera.setup("reset cam", false));
+    panel.add(useShaderToggle.setup("use shader",true));
+    panel.add(reloadShaders.setup("reload shader", false));
+    panel.add(clear.setup("clear", false));
     
+    renderOutput = false; // force false
+        framesSaved = 0;
     ofxXmlSettings defaults;
     defaults.loadFile("defaults.xml");
     string defaultTake = defaults.getValue("take", "");
+    string defaultComp = defaults.getValue("comp", "");
     if(defaultTake != "" && take.loadFromFolder(defaultTake)){
 
         renderer.setup(take.calibrationDirectory);
@@ -78,23 +95,19 @@ void testApp::setup(){
         timeline.setDurationInFrames(depthImages.videoThumbs.size());
         
 //        alignment.loadPairingFile(take.pairingsFile);
-        
 //        movie.loadMovie(take.lowResVideoPath);
 //        movie.setUseTexture(false);
 //        movie.play();
 //        movie.setSpeed(0);
-        
 //        playerElement.setVideoPlayer(movie, take.videoThumbsPath);
-//		timeline.addElement("Video", &playerElement);
+//		  timeline.addElement("Video", &playerElement);
 //        timeline.setDurationInFrames(movie.getDuration());
     }
     
-    for(int i = 0; i < 50; i++){
-        ofNode n;
-        n.setPosition(ofRandom(-200,200),
-                      ofRandom(-200,200),
-                      ofRandom(-200,200) );
-        debugNodes.push_back( n );
+    if(defaultComp != ""){
+        cout << "loading default comp" << defaultComp << endl;
+        timeline.loadElementsFromFolder(defaultComp);
+        currentSaveFolder = defaultComp + "EXPORTS";
     }
     
     //setup forces
@@ -111,7 +124,7 @@ void testApp::setup(){
         emmiters.push_back(g);
     }
     
-    for(int i = 0; i < absoluteMaxParticles; i++){
+    for(int i = 0; i < absoluteMaxParticles*1.5; i++){
     	mesh.addVertex(ofVec3f(0,0,0));
         mesh.addColor(ofFloatColor(1.0,1.0,1.0,1.0));
     }
@@ -126,9 +139,50 @@ void testApp::update(){
         return;
     }
     
+    if(reloadShaders){
+        loadShaders();
+    }
+    if(saveCameraPoint){
+    	track.sample();
+    }
+    
+    if(clear){
+        for(int i = 0; i < emmiters.size(); i++){
+        	emmiters[i].particles.clear();
+        }
+    }
+    
+    if(setCompDirectory){
+        ofFileDialogResult r = ofSystemLoadDialog("Select Comp", true);
+        if(r.bSuccess){
+
+            timeline.loadElementsFromFolder(r.getPath() + "/");
+            currentSaveFolder = r.getPath() + "/EXPORTS";
+            ofDirectory(currentSaveFolder).create(true);
+            
+            ofxXmlSettings defaults;
+            defaults.loadFile("defaults.xml");
+            defaults.setValue("comp", r.getPath() + "/");
+			defaults.saveFile();
+        }
+    }
+    track.lockCameraToTrack = lockToTrackToggle;
+    if(lockToTrackToggle){
+        cam.targetNode.setPosition(cam.getPosition());
+        cam.targetNode.setOrientation(cam.getOrientationQuat());
+        cam.rotationX = cam.targetXRot = -cam.getHeading();
+        cam.rotationY = cam.targetYRot = -cam.getPitch();
+//        cam.rotationZ = -cam.getRoll();
+    }
+    if(resetCamera){
+        cam.reset();
+    }
+    
     //VIEW
-    cam.applyRotation = cam.applyTranslation = fboRect.inside(ofGetMouseX(),ofGetMouseY());
-    fboRect = ofRectangle(timeline.getDrawRect().x, timeline.getDrawRect().height, 1920/2, 1080/2);
+    float fboHeight = ofGetHeight() - timeline.getDrawRect().height - 28;
+    float fboWidth = 1920./1080 * fboHeight;
+    fboRect = ofRectangle(timeline.getDrawRect().x, timeline.getDrawRect().height + 28, fboWidth, fboHeight);
+    cam.applyRotation = cam.applyTranslation = fboRect.inside(ofGetMouseX(),ofGetMouseY()) && !lockToTrackToggle;
     
     dragForce->dragForce = powf( timeline.getKeyframeValue("Drag Force"), 2.0);
     
@@ -138,7 +192,11 @@ void testApp::update(){
     
     meshForce->minRadius = timeline.getKeyframeValue("Min Radius");
     meshForce->attractScale = timeline.getKeyframeValue("Mesh Attract");
-
+	
+    dragForce->update();
+    perlinForce->update();
+    meshForce->update();
+    
     //GENERATOR
     float birthRate = timeline.getKeyframeValue("Birthrate");
     float lifeSpan  = timeline.getKeyframeValue("Lifespan");
@@ -211,20 +269,17 @@ void testApp::draw(){
     cam.begin(ofRectangle(0,0,1920,1080));
 //    ofDrawGrid();
     
-    if(depthImages.isLoaded()){
-        ofPushStyle();
-        ofSetColor(255);
-//        renderer.drawWireFrame(false);
-        ofPopStyle();
-        //for(int i = 0; i < debugNodes.size(); i++) debugNodes[i].draw();
-    }
+    ofPushStyle();
+    ofSetColor(255);
+//  renderer.drawWireFrame(false);
+    ofPopStyle();
     
     //RENDERER
     //glPointSize(4);
     ofPushStyle();
     glPushMatrix();
     glScalef(1,-1,1);
-    if(useShader){
+    if(useShaderToggle){
         pointCloudDOF.begin();
         pointCloudDOF.setUniform1f("minSize", timeline.getKeyframeValue("Min Point Size"));
         pointCloudDOF.setUniform1f("maxSize", timeline.getKeyframeValue("Max Point Size"));
@@ -232,35 +287,20 @@ void testApp::draw(){
         pointCloudDOF.setUniform1f("focalDistance", timeline.getKeyframeValue("Focal Distance"));
     }
     else{
-    	glPointSize(4);
+    	glPointSize(timeline.getKeyframeValue("Min Point Size"));
     }
+    
     ofEnableBlendMode(OF_BLENDMODE_ADD);
     glEnable(GL_POINT_SMOOTH); // makes circular points
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);	// allows per-point size
     mesh.drawVertices();
-    if(useShader){
+    if(useShaderToggle){
         pointCloudDOF.end();    	
     }
     glPopMatrix();
     ofPopStyle();
     
     //debugDrawOrigins();
-	
-    /*
-    glBegin(GL_POINTS);
-    glPointSize(4);
-    glColor3f(1.0, 0, 0);
-    int totalValidVerts = 0;
-    for(int i = 0; i < renderer.getMesh().getVertices().size(); i++){
-    	if(renderer.isVertexValid(i) ){
-            totalValidVerts++;
-            ofVec3f vert = renderer.getMesh().getVertex( renderer.vertexIndex(i) );
-        	glVertex3f(vert.x, vert.y, vert.z);
-        }
-    }
-    glEnd();    
-    cout << "valid verts " << totalValidVerts << endl;
-    */
     
     cam.end();
     
@@ -272,10 +312,19 @@ void testApp::draw(){
     ofPopStyle();
 
     renderTarget.getTextureReference().draw(fboRect); 
+    if(renderOutput){
+        renderTarget.getTextureReference().readToPixels(savingImage.getPixelsRef());
+        char filename[512];        		
+        sprintf(filename, "%s/save_%05d_%05d.png", currentSaveFolder.c_str(), framesSaved, timeline.getCurrentFrame());
+        savingImage.saveImage(filename);
+		framesSaved++;
+    }
     
     ofDrawBitmapString("totalParticles " + ofToString(totalParticles ), fboRect.x+fboRect.width + 10, fboRect.y + 15);
-    
+    ofDrawBitmapString("Saving to " + currentSaveFolder, 10, fboRect.y - 15);
     timeline.draw();
+    panel.setPosition(ofPoint(fboRect.x+fboRect.width + 10, fboRect.y + 32));
+    panel.draw();
 }
 
 void testApp::debugDrawOrigins(){
@@ -345,21 +394,20 @@ void testApp::keyPressed(int key){
     }
     
     if(key == 'R'){
-        cam.reset();
+
     }
     
-    if(key == 'K'){
-        for(int i = 0; i < emmiters.size(); i++){
-        	emmiters[i].particles.clear();
-        }
+    if(key == 'C'){
     }
     
     if(key == 'L'){
-    	loadShaders();
+    	//loadShaders();
+        //lockToTrackToggle != lockToTrackToggle;
+        lockToTrackToggle = !lockToTrackToggle;
     }
     
-    if(key == 'N'){
-    	useShader = !useShader;
+    if(key == 'T'){
+        track.sample();
     }
 }
 

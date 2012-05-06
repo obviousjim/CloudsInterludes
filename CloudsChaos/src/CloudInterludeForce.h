@@ -13,6 +13,7 @@
 
 class CloudInterludeForce {
   public:    
+    virtual void update() = 0;
     virtual void applyForce(vector<CloudInterludeParticle>& particles) = 0;    
 };
 

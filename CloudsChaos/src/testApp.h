@@ -8,7 +8,9 @@
 
 #include "ofxTimeline.h"
 #include "ofxTLDepthImageSequence.h"
+#include "ofxTLCameraTrack.h"
 #include "ofxRGBDVideoDepthSequence.h"
+#include "ofxGui.h"
 
 #include "CloudInterludeParticleGenerator.h"
 #include "CloudInterludeForcePerlin.h"
@@ -35,11 +37,27 @@ class testApp : public ofBaseApp
     void copyVertsToMesh();
     void debugDrawOrigins();
     void loadShaders();
-    bool useShader;
+    
+    //gui elements
+    ofxPanel panel;
+    ofxToggle lockToTrackToggle;
+    ofxToggle useShaderToggle;
+    ofxButton reloadShaders;
+    ofxButton saveCameraPoint;
+    ofxToggle renderOutput;
+    ofxButton setCompDirectory;
+    ofxButton resetCamera;
+    ofxButton clear;
+    
+    int framesSaved;
+    bool createdFolder;
+    string currentSaveFolder;
 //    void initializeWithTake(string takePath);
 
     ofxTimeline timeline;
-    
+    ofxTLCameraTrack track;
+    ofxTLDepthImageSequence depthImages;
+
     ofFbo renderTarget;
     ofxGameCamera cam;
     ofxRGBDRenderer renderer;
@@ -47,10 +65,8 @@ class testApp : public ofBaseApp
     
 //    ofVideoPlayer movie;
 //    ofxTLVideoPlayer playerElement;
-    ofxTLDepthImageSequence depthImages;
 //    ofxRGBDVideoDepthSequence alignment;
-    
-    vector<ofNode> debugNodes;
+    ofImage savingImage;
     
     ofRectangle fboRect;
     

@@ -16,6 +16,8 @@ class CloudInterludeForceMeshAttractor : public CloudInterludeForce {
         
     }
     
+    void update(){}
+    
     void applyForce(vector<CloudInterludeParticle>& particles){
 
         int step = 200;
