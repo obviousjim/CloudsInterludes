@@ -4,9 +4,12 @@
 #include "ofxGameCamera.h"
 #include "ofxRGBDRenderer.h"
 #include "ofxRGBDMediaTake.h"
+#include "ofxGui.h"
 
 #include "ofxTimeline.h"
 #include "ofxTLDepthImageSequence.h"
+#include "ofxRGBDVideoDepthSequence.h"
+
 #include "CloudInterludeParticleGenerator.h"
 #include "CloudInterludeForcePerlin.h"
 #include "CloudInterludeForceDrag.h"
@@ -31,15 +34,22 @@ class testApp : public ofBaseApp
     
     void copyVertsToMesh();
     void debugDrawOrigins();
-    void initializeMesh();
-    
+    void loadShaders();
+    bool useShader;
+//    void initializeWithTake(string takePath);
+
     ofxTimeline timeline;
     
     ofFbo renderTarget;
     ofxGameCamera cam;
     ofxRGBDRenderer renderer;
     ofxRGBDMediaTake take;
+    
+//    ofVideoPlayer movie;
+//    ofxTLVideoPlayer playerElement;
     ofxTLDepthImageSequence depthImages;
+//    ofxRGBDVideoDepthSequence alignment;
+    
     vector<ofNode> debugNodes;
     
     ofRectangle fboRect;
@@ -50,7 +60,9 @@ class testApp : public ofBaseApp
     CloudInterludeForcePerlin* perlinForce;
     CloudInterludeForceDrag* dragForce;
     CloudInterludeForceMeshAttractor* meshForce;
-
+    
+    ofShader pointCloudDOF;
+    
     int totalParticles;
     
     ofVboMesh mesh;

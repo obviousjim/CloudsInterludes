@@ -29,14 +29,17 @@ void testApp::setup(){
     timeline.setDurationInFrames(500);
     timeline.setOffset(ofVec2f(0,0));
     
-    int absoluteMaxParticles = 1000000;
+    useShader = false;
+    
+    int absoluteMaxParticles = 40000;
     depthImages.setup();
     timeline.setPageName("Source");
     timeline.addElement("Depth", &depthImages);
     timeline.addKeyframes("Simplify", "zthreshold.xml", ofRange(0, 8 ), 2);
     timeline.addKeyframes("Z Threshold", "zthreshold.xml", ofRange(0, sqrtf(5000) ), sqrtf(5000));
     timeline.addKeyframes("Edge Snip", "edgesnip.xml", ofRange(0, sqrtf(2000) ), sqrtf(2000));
-        
+
+
     timeline.addPage("Particles");
     timeline.addKeyframes("Max Particles", "maxParticles.xml", ofRange(10, absoluteMaxParticles) );
     timeline.addKeyframes("Birthrate", "particleBirthrate.xml", ofRange(.001, .01) );
@@ -44,16 +47,24 @@ void testApp::setup(){
     timeline.addKeyframes("Lifespan Variance", "particleLifespanVariance.xml", ofRange(0, 100) );
     timeline.addKeyframes("Drag Force", "particleDragFroce.xml", ofRange(0, 1.0), 0);
     
+    timeline.addPage("DOF");
+	timeline.addKeyframes("Focal Distance", "dofFocalDistance.xml", ofRange(0, 2000));
+    timeline.addKeyframes("Focal Range", "dofFocalRange.xml", ofRange(0, 500));
+    timeline.addKeyframes("Min Point Size", "dofMinPoint.xml", ofRange(1, 5));
+    timeline.addKeyframes("Max Point Size", "dofMaxPoint.xml", ofRange(10, 45));
+    
     timeline.addPage("Perlin");
-    timeline.addKeyframes("Perlin Amplitude", "perlinAmplitude.xml", ofRange(1, sqrtf(200)) );
+    timeline.addKeyframes("Perlin Amplitude", "perlinAmplitude.xml", ofRange(0, sqrtf(200)) );
     timeline.addKeyframes("Perlin Density", "perlinDensity.xml", ofRange(0, sqrtf(2000)));
     timeline.addKeyframes("Perlin Speed", "perlinSpeed.xml", ofRange(0, sqrtf(5)), 0);
     
     timeline.addPage("Attractors");
     timeline.addKeyframes("Mesh Attract", "meshAttractScale.xml", ofRange(0, 2000));
     timeline.addKeyframes("Min Radius", "meshMinRadius.xml", ofRange(0, 6000));
-
     timeline.setCurrentPage(0);
+    
+//    timeline.addPage("Luminosity");
+//	timeline.addKeyframes("Lumin Mid", "Lumin Mid", <#ofRange valueRange#>)
     
     ofxXmlSettings defaults;
     defaults.loadFile("defaults.xml");
@@ -65,6 +76,17 @@ void testApp::setup(){
         
         renderer.setDepthImage(depthImages.currentDepthRaw);
         timeline.setDurationInFrames(depthImages.videoThumbs.size());
+        
+//        alignment.loadPairingFile(take.pairingsFile);
+        
+//        movie.loadMovie(take.lowResVideoPath);
+//        movie.setUseTexture(false);
+//        movie.play();
+//        movie.setSpeed(0);
+        
+//        playerElement.setVideoPlayer(movie, take.videoThumbsPath);
+//		timeline.addElement("Video", &playerElement);
+//        timeline.setDurationInFrames(movie.getDuration());
     }
     
     for(int i = 0; i < 50; i++){
@@ -77,8 +99,8 @@ void testApp::setup(){
     
     //setup forces
     perlinForce = new CloudInterludeForcePerlin();
-    dragForce = new CloudInterludeForceDrag();
-    meshForce = new CloudInterludeForceMeshAttractor();
+    dragForce   = new CloudInterludeForceDrag();
+    meshForce   = new CloudInterludeForceMeshAttractor();
     meshForce->mesh = &renderer.getMesh();
     
     for(int i = 0; i < 640*480; i++){
@@ -94,22 +116,19 @@ void testApp::setup(){
         mesh.addColor(ofFloatColor(1.0,1.0,1.0,1.0));
     }
 
-//    generator.addForce(perlinForce);
-//    generator.addForce(dragForce);
-//    generator.addForce(meshForce);
-//    
-//    generator.position = ofVec3f(0,0,0);
-//    generator.direction = ofVec3f(0,0,1);
-
+    loadShaders();
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
     
+    if(!take.valid()){
+        return;
+    }
+    
     //VIEW
     cam.applyRotation = cam.applyTranslation = fboRect.inside(ofGetMouseX(),ofGetMouseY());
     fboRect = ofRectangle(timeline.getDrawRect().x, timeline.getDrawRect().height, 1920/2, 1080/2);
-    
     
     dragForce->dragForce = powf( timeline.getKeyframeValue("Drag Force"), 2.0);
     
@@ -146,7 +165,6 @@ void testApp::update(){
             g.lifespanVariance = lifeSpanVariance;
             g.position = renderer.getMesh().getVertex( renderer.vertexIndex(i) );
             g.remainingParticles = maxParticles - totalParticles;
-            //g.remainingParticles = maxParticles - g.particles.size();
         }
     }
     
@@ -169,7 +187,8 @@ void testApp::update(){
         needsUpdate = true;
     }
     
-    if(depthImages.isLoaded() && depthImages.isFrameNew()){
+//    movie.update();
+    if(take.valid() && depthImages.isFrameNew()){
         renderer.setDepthImage(depthImages.currentDepthRaw);
         needsUpdate = true;
     }
@@ -177,7 +196,10 @@ void testApp::update(){
     if(needsUpdate){
         renderer.update();
     }
-    
+}
+
+void testApp::loadShaders(){
+	pointCloudDOF.load("shaders/DOFCloud");
 }
 
 //--------------------------------------------------------------
@@ -187,23 +209,40 @@ void testApp::draw(){
     ofClear(0);
     
     cam.begin(ofRectangle(0,0,1920,1080));
-    ofDrawGrid();
+//    ofDrawGrid();
     
     if(depthImages.isLoaded()){
         ofPushStyle();
         ofSetColor(255);
 //        renderer.drawWireFrame(false);
         ofPopStyle();
-        
         //for(int i = 0; i < debugNodes.size(); i++) debugNodes[i].draw();
     }
     
     //RENDERER
-    glPointSize(4);
+    //glPointSize(4);
+    ofPushStyle();
     glPushMatrix();
     glScalef(1,-1,1);
+    if(useShader){
+        pointCloudDOF.begin();
+        pointCloudDOF.setUniform1f("minSize", timeline.getKeyframeValue("Min Point Size"));
+        pointCloudDOF.setUniform1f("maxSize", timeline.getKeyframeValue("Max Point Size"));
+        pointCloudDOF.setUniform1f("focalRange", timeline.getKeyframeValue("Focal Range"));
+        pointCloudDOF.setUniform1f("focalDistance", timeline.getKeyframeValue("Focal Distance"));
+    }
+    else{
+    	glPointSize(4);
+    }
+    ofEnableBlendMode(OF_BLENDMODE_ADD);
+    glEnable(GL_POINT_SMOOTH); // makes circular points
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);	// allows per-point size
     mesh.drawVertices();
+    if(useShader){
+        pointCloudDOF.end();    	
+    }
     glPopMatrix();
+    ofPopStyle();
     
     //debugDrawOrigins();
 	
@@ -268,9 +307,6 @@ void testApp::copyVertsToMesh(){
     }
 	
     memset(&(meshColors[meshIndex].r), 0, sizeof(ofFloatColor)*(meshColors.size()-meshIndex));
-//    for(int i = meshIndex; i < meshVertices.size(); i++){
-//        
-//    }
 }
 
 //--------------------------------------------------------------
@@ -295,7 +331,14 @@ void testApp::keyPressed(int key){
     
     if(key == ' '){
         timeline.togglePlay();
-    }   
+//		if(movie.getSpeed() != 0.0){
+//			movie.setSpeed(0);
+//		}
+//		else{
+//			movie.play();
+//			movie.setSpeed(1.0);
+//		}
+    }
     
     if(key == 'f'){
         ofToggleFullscreen();
@@ -309,6 +352,14 @@ void testApp::keyPressed(int key){
         for(int i = 0; i < emmiters.size(); i++){
         	emmiters[i].particles.clear();
         }
+    }
+    
+    if(key == 'L'){
+    	loadShaders();
+    }
+    
+    if(key == 'N'){
+    	useShader = !useShader;
     }
 }
 
