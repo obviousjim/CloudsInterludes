@@ -29,10 +29,16 @@ class CloudInterludeParticleGenerator {
             p.energy = p.initialEnergy = lifespan + ofRandom(-lifespanVariance/2, lifespanVariance/2);
             p.origin = p.position = position;
             p.velocity = direction;
+            if(showType && ofRandomuf() < typeChance){
+                p.hasType = true;
+            }
             particles.push_back(p);
             numToBear--;
             remainingParticles--;
         }
+        
+        //sacrifice the rest
+        numToBear -= int(numToBear);
         
         for(int i = 0; i < forces.size(); i++){
             forces[i]->applyForce(particles);
@@ -92,7 +98,9 @@ class CloudInterludeParticleGenerator {
     float lifespanVariance;
     ofVec3f position;
     ofVec3f direction;
-    
+
+    bool showType;
+    float typeChance;
   protected:
     float numToBear;
 };

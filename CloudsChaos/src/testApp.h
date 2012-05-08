@@ -38,6 +38,7 @@ class testApp : public ofBaseApp
     void debugDrawOrigins();
     void loadShaders();
     
+
     //gui elements
     ofxPanel panel;
     ofxToggle lockToTrackToggle;
@@ -48,36 +49,42 @@ class testApp : public ofBaseApp
     ofxButton setCompDirectory;
     ofxButton resetCamera;
     ofxButton clear;
+    ofxButton useDofBlur;
+    ofxToggle showType;
+    
+    float luminosityChannel;
     
     int framesSaved;
     bool createdFolder;
     string currentSaveFolder;
-//    void initializeWithTake(string takePath);
 
     ofxTimeline timeline;
     ofxTLCameraTrack track;
     ofxTLDepthImageSequence depthImages;
 
     ofFbo renderTarget;
+    ofFbo focusChannel;
+    ofFbo modelTarget;
+    ofFbo blurBuffer;
+    ofFbo fbo2;
+    
     ofxGameCamera cam;
     ofxRGBDRenderer renderer;
     ofxRGBDMediaTake take;
     
-//    ofVideoPlayer movie;
-//    ofxTLVideoPlayer playerElement;
-//    ofxRGBDVideoDepthSequence alignment;
     ofImage savingImage;
     
     ofRectangle fboRect;
     
     //forces
-    //CloudInterludeParticleGenerator generator;
     vector<CloudInterludeParticleGenerator> emmiters;
     CloudInterludeForcePerlin* perlinForce;
     CloudInterludeForceDrag* dragForce;
     CloudInterludeForceMeshAttractor* meshForce;
     
     ofShader pointCloudDOF;
+    ofShader dofRange;
+    ofShader dofBlur;
     
     int totalParticles;
     

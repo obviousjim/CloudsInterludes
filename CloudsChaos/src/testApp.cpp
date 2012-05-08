@@ -1,5 +1,12 @@
 #include "testApp.h"
 
+//Wireframe/Point DOF
+//Mesh Distortion
+//Mesh Luminosity
+//Wind force
+//Color map
+//Typographic effect
+
 //--------------------------------------------------------------
 void testApp::setup(){
     ofEnableAlphaBlending();
@@ -9,10 +16,13 @@ void testApp::setup(){
     ofToggleFullscreen();
     
     renderTarget.allocate(1920, 1080, GL_RGB, 4);
+    focusChannel.allocate(1920, 1080, GL_RGB, 4);
+    modelTarget.allocate(1920, 1080, GL_RGB, 4);
+    blurBuffer.allocate(1920, 1080, GL_RGB, 4);
     
     renderer.setSimplification(2);
     renderer.forceUndistortOff = true;
-    
+    renderer.addColors = true;
     
     cam.setup();
     cam.usemouse = true;
@@ -37,7 +47,7 @@ void testApp::setup(){
     timeline.setDurationInFrames(500);
     timeline.setOffset(ofVec2f(0,0));
         
-    int absoluteMaxParticles = 40000;
+    int absoluteMaxParticles = 500000;
     depthImages.setup();
     timeline.setPageName("Source");
     timeline.addElement("Depth", &depthImages);
@@ -50,27 +60,43 @@ void testApp::setup(){
 
     timeline.addPage("Particles");
     timeline.addKeyframes("Max Particles", "maxParticles.xml", ofRange(0, absoluteMaxParticles) );
-    timeline.addKeyframes("Birthrate", "particleBirthrate.xml", ofRange(.000, .01) );
-    timeline.addKeyframes("Lifespan", "particleLifespan.xml", ofRange(2, 300) );
+    timeline.addKeyframes("Birthrate", "particleBirthrate.xml", ofRange(.000, .05) );
+    timeline.addKeyframes("Lifespan", "particleLifespan.xml", ofRange(2, 900) );
     timeline.addKeyframes("Lifespan Variance", "particleLifespanVariance.xml", ofRange(0, 100) );
     timeline.addKeyframes("Drag Force", "particleDragFroce.xml", ofRange(0, 1.0), 0);
     
     timeline.addPage("DOF");
-	timeline.addKeyframes("Focal Distance", "dofFocalDistance.xml", ofRange(0, 2000));
-    timeline.addKeyframes("Focal Range", "dofFocalRange.xml", ofRange(0, 500));
+    timeline.addKeyframes("DOF Distance", "DOFDistance.xml", ofRange(0,sqrtf(1000.0)), 10 );
+    timeline.addKeyframes("DOF Range", "DOFRange.xml", ofRange(10,sqrtf(500.0)) );
+    timeline.addKeyframes("DOF Blur", "DOFBlur.xml", ofRange(0,5.0) );
     timeline.addKeyframes("Min Point Size", "dofMinPoint.xml", ofRange(1, 5));
     timeline.addKeyframes("Max Point Size", "dofMaxPoint.xml", ofRange(10, 45));
     
     timeline.addPage("Perlin");
     timeline.addKeyframes("Perlin Amplitude", "perlinAmplitude.xml", ofRange(0, sqrtf(20)) );
     timeline.addKeyframes("Perlin Density", "perlinDensity.xml", ofRange(0, sqrtf(2000)));
-    timeline.addKeyframes("Perlin Speed", "perlinSpeed.xml", ofRange(0, sqrtf(5)), 0);
+    timeline.addKeyframes("Perlin Speed", "perlinSpeed.xml", ofRange(0, sqrtf(2)), 0);
+
+    timeline.addPage("Mesh Rendering");
+	timeline.addKeyframes("Wireframe Alpha", "wireframeAlpha.xml", ofRange(0, 1.0), 0.0);
+    timeline.addKeyframes("Wireframe Perlin Density", "wireframePerlinDensity.xml", ofRange(500, 3000.0), 0.0);
+    timeline.addKeyframes("Wireframe Perlin Speed", "wireframePerlinSpeed.xml", ofRange(0, .2), 0.0);
+    timeline.addKeyframes("Wireframe Lumin Contrast", "wireframeLuminContrast.xml", ofRange(0, 10.0), 1.0);
+    timeline.addKeyframes("Wireframe Lumin Exponent", "wireframeLuminExponent.xml", ofRange(1.0, 5.0), 0.0);
     
-    timeline.addPage("Attractors");
-    timeline.addKeyframes("Mesh Attract", "meshAttractScale.xml", ofRange(0, 2000));
-    timeline.addKeyframes("Min Radius", "meshMinRadius.xml", ofRange(0, 6000));
-    timeline.setCurrentPage(0);
+    timeline.addPage("Mesh Distort");
+    timeline.addKeyframes("Mesh Implode", "meshImplode.xml", ofRange(1.0, 2500), 1.0 );
+    timeline.addKeyframes("Mesh Perlin Amplitude", "meshPerlinAmplitude.xml", ofRange(0, sqrtf(20)) );
+    timeline.addKeyframes("Mesh Perlin Density", "meshPerlinDensity.xml", ofRange(0, sqrtf(2000)));
+    timeline.addKeyframes("Mesh Perlin Speed", "meshPerlinSpeed.xml", ofRange(0, sqrtf(2)), 0);
     
+    timeline.addPage("Typography");
+    timeline.addKeyframes("Type Alpha", "typeAlpha.xml", ofRange(0,1));
+	timeline.addKeyframes("Chance of Attaching Type", "typeChance.xml", ofRange(0,0.5) );
+	timeline.addKeyframes("Line Alpha", "lineAlpha.xml", ofRange(0,1.0) );
+
+    luminosityChannel = 0; //for mesh perlin
+        
     panel.setup("Settings", "settings.xml");
     panel.add(setCompDirectory.setup("load comp"));
     panel.add(renderOutput.setup("render", false));
@@ -78,10 +104,12 @@ void testApp::setup(){
     panel.add(resetCamera.setup("reset cam", false));
     panel.add(useShaderToggle.setup("use shader",true));
     panel.add(reloadShaders.setup("reload shader", false));
+    panel.add(showType.setup("show type", false));
     panel.add(clear.setup("clear", false));
     
     renderOutput = false; // force false
-        framesSaved = 0;
+    framesSaved = 0;
+    
     ofxXmlSettings defaults;
     defaults.loadFile("defaults.xml");
     string defaultTake = defaults.getValue("take", "");
@@ -124,7 +152,7 @@ void testApp::setup(){
         emmiters.push_back(g);
     }
     
-    for(int i = 0; i < absoluteMaxParticles*1.5; i++){
+    for(int i = 0; i < absoluteMaxParticles; i++){
     	mesh.addVertex(ofVec3f(0,0,0));
         mesh.addColor(ofFloatColor(1.0,1.0,1.0,1.0));
     }
@@ -141,6 +169,7 @@ void testApp::update(){
     
     if(reloadShaders){
         loadShaders();
+
     }
     if(saveCameraPoint){
     	track.sample();
@@ -172,41 +201,109 @@ void testApp::update(){
         cam.targetNode.setOrientation(cam.getOrientationQuat());
         cam.rotationX = cam.targetXRot = -cam.getHeading();
         cam.rotationY = cam.targetYRot = -cam.getPitch();
-//        cam.rotationZ = -cam.getRoll();
     }
     if(resetCamera){
         cam.reset();
     }
-    
+        
     //VIEW
     float fboHeight = ofGetHeight() - timeline.getDrawRect().height - 28;
     float fboWidth = 1920./1080 * fboHeight;
     fboRect = ofRectangle(timeline.getDrawRect().x, timeline.getDrawRect().height + 28, fboWidth, fboHeight);
     cam.applyRotation = cam.applyTranslation = fboRect.inside(ofGetMouseX(),ofGetMouseY()) && !lockToTrackToggle;
     
-    dragForce->dragForce = powf( timeline.getKeyframeValue("Drag Force"), 2.0);
+    //RENDERER
+    bool needsUpdate = false;
+    renderer.farClip = powf(timeline.getKeyframeValue("Z Threshold"), 2.0);
+    renderer.edgeCull = powf(timeline.getKeyframeValue("Edge Snip"), 2.0);
+    if(renderer.getSimplification() != (int)timeline.getKeyframeValue("Simplify")){
+        renderer.setSimplification( (int)timeline.getKeyframeValue("Simplify") );
+    }
     
+    if(timeline.getUserChangedValue()){
+        needsUpdate = true;
+    }
+    
+    //    movie.update();
+    if(take.valid() && depthImages.isFrameNew()){
+        renderer.setDepthImage(depthImages.currentDepthRaw);
+        needsUpdate = true;
+    }
+    
+    if(needsUpdate){
+        renderer.update();
+
+        //modify the colors
+        float wireframeAlpha = timeline.getKeyframeValue("Wireframe Alpha");
+        float luminSpeed    = timeline.getKeyframeValue("Wireframe Perlin Speed");
+        float luminDensity  = timeline.getKeyframeValue("Wireframe Perlin Density");
+        float luminContrast = timeline.getKeyframeValue("Wireframe Lumin Contrast");
+        float luminExponent = timeline.getKeyframeValue("Wireframe Lumin Exponent");
+                
+        luminosityChannel += luminSpeed;
+        
+        vector<ofFloatColor>& colors = renderer.getMesh().getColors();
+        vector<ofVec3f>& verts = renderer.getMesh().getVertices();
+        for(int i = 0; i < renderer.getTotalPoints(); i++){
+            if(renderer.isVertexValid(i)){
+                int vertexIndex = renderer.vertexIndex(i);
+                
+                ofVec3f& vert = verts[vertexIndex];
+                float alpha = ofNoise(vert.x/luminDensity+luminosityChannel,
+                                 vert.y/luminDensity+luminosityChannel, 
+                                 vert.z/luminDensity+luminosityChannel);
+            	alpha = (alpha - .05f) * luminContrast + 0.5f;
+                alpha = 1 - powf(alpha, luminExponent);
+                alpha *= wireframeAlpha;
+                colors[vertexIndex] = ofFloatColor(1.0,1.0,1.0,alpha);
+            }
+        }
+        
+        /*
+        //now distort the mesh
+        float implode = timeline.getKeyframeValue("Mesh Implode");
+        float implodeSqr = implode*implode;
+        ofVec3f zero(0,0,0);
+        for(int i = 0; i < renderer.getTotalPoints(); i++){
+            if(renderer.isVertexValid(i)){
+                int vertexIndex = renderer.vertexIndex(i);                
+                
+                //float alpha = ofMap(verts[vertexIndex].length(), implode, implode-2000, 1.0, 0.0, true);
+                //float effect = implode - verts[vertexIndex].length();
+                
+                if(alpha == 0){
+                    //verts[vertexIndex] *= 1.0/(effect+1.);
+                    verts[vertexIndex] = zero;
+                }
+                else if(alpha != 1.0){
+                    verts[vertexIndex].getInterpolated(zero, alpha);
+                }
+
+            }
+        }
+		*/
+    }
+    
+    
+    dragForce->dragForce = powf( timeline.getKeyframeValue("Drag Force"), 2.0);
     perlinForce->amplitude = powf( timeline.getKeyframeValue("Perlin Amplitude"), 2.0);
     perlinForce->density = powf( timeline.getKeyframeValue("Perlin Density"), 2.0);
     perlinForce->speed = powf( timeline.getKeyframeValue("Perlin Speed"), 2.0);
     
-    meshForce->minRadius = timeline.getKeyframeValue("Min Radius");
-    meshForce->attractScale = timeline.getKeyframeValue("Mesh Attract");
+//    meshForce->minRadius = timeline.getKeyframeValue("Min Radius");
+//    meshForce->attractScale = timeline.getKeyframeValue("Mesh Attract");
 	
     dragForce->update();
     perlinForce->update();
-    meshForce->update();
+//    meshForce->update();
+    
     
     //GENERATOR
     float birthRate = timeline.getKeyframeValue("Birthrate");
     float lifeSpan  = timeline.getKeyframeValue("Lifespan");
     float lifeSpanVariance = timeline.getKeyframeValue("Lifespan Variance");
     int maxParticles = timeline.getKeyframeValue("Max Particles");
-    
-//    for(int i = 0; i < emitters.size(); i++){    
-//    	emitters[i].enabled = false;
-//    }
-
+    float typeChance = timeline.getKeyframeValue("Chance of Attaching Type");
     totalParticles = 0;
     for(int i = 0; i < emmiters.size(); i++){
     	emmiters[i].birthRate = 0;
@@ -223,6 +320,8 @@ void testApp::update(){
             g.lifespanVariance = lifeSpanVariance;
             g.position = renderer.getMesh().getVertex( renderer.vertexIndex(i) );
             g.remainingParticles = maxParticles - totalParticles;
+            g.showType = showType;
+            g.typeChance = typeChance;
         }
     }
     
@@ -231,51 +330,106 @@ void testApp::update(){
     }
     
     //put the particles in the mesh;
-    copyVertsToMesh();
-        
-    //RENDERER
-    bool needsUpdate = false;
-    renderer.farClip = powf(timeline.getKeyframeValue("Z Threshold"), 2.0);
-    renderer.edgeCull = powf(timeline.getKeyframeValue("Edge Snip"), 2.0);
-    if(renderer.getSimplification() != (int)timeline.getKeyframeValue("Simplify")){
-        renderer.setSimplification( (int)timeline.getKeyframeValue("Simplify") );
-    }
-
-    if(timeline.getUserChangedValue()){
-        needsUpdate = true;
-    }
-    
-//    movie.update();
-    if(take.valid() && depthImages.isFrameNew()){
-        renderer.setDepthImage(depthImages.currentDepthRaw);
-        needsUpdate = true;
-    }
-    
-    if(needsUpdate){
-        renderer.update();
-    }
+    copyVertsToMesh();        
 }
 
 void testApp::loadShaders(){
 	pointCloudDOF.load("shaders/DOFCloud");
+    dofRange.load("shaders/dofrange");
+    dofBlur.load("shaders/dofblur");
+    dofBlur.begin();
+    dofBlur.setUniform1i("tex", 0);
+    dofBlur.setUniform1i("range", 1);
+    dofBlur.end();
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
+
+    float focalRange = powf(timeline.getKeyframeValue("DOF Range"), 2);
+    float focalDistance = powf(timeline.getKeyframeValue("DOF Distance"), 2);
     
+    //////////////////////////
+    //START RENDER FOCUS CHANNEL
+    focusChannel.begin();    
+    ofClear(255,255,255,255);
+    
+    cam.begin(ofRectangle(0,0,1920,1080));
+    glEnable(GL_DEPTH_TEST);
+    
+    dofRange.begin();
+    dofRange.setUniform1f("focalDistance", focalDistance);
+    dofRange.setUniform1f("focalRange", focalRange);
+    
+    ofDisableAlphaBlending();
+    //renderer.drawMesh(false);
+    ofPushStyle();
+    ofSetLineWidth(4);
+    renderer.drawWireFrame(false);
+    ofPopStyle();
+    dofRange.end();
+    
+    cam.end();
+    
+    glDisable(GL_DEPTH_TEST);
+    focusChannel.end();
+    
+    //STOP RENDER FOCUS CHANNEL
+	//////////////////////////
+    
+    //////////////////////////
+    //START RENDER WIREFRAME
+    modelTarget.begin();
+    ofClear(0,0,0,0);
+    
+    cam.begin(ofRectangle(0,0,1920,1080));
+    ofPushStyle();
+    
+    ofEnableAlphaBlending();
+    glEnable(GL_DEPTH_TEST);
+    
+//    if(selfOcclude){
+        //occlude points behind the mesh
+//        ofPushMatrix();
+//        ofSetColor(0, 0, 0, 0);
+//ofVec3f camTranslateVec = cam.getLookAtDir();    
+//        ofTranslate(camTranslateVec);
+//        renderer.drawMesh(false);
+//        ofPopMatrix();
+//    }
+    
+    ofEnableAlphaBlending();
+    //ofEnableBlendMode(blendMode);
+    glEnable(GL_DEPTH_TEST);
+    
+//    ofSetColor(255*wireframeAlpha);        
+    //float thickness = timeline.getKeyframeValue("Wireframe Thickness");
+    //thickness *= thickness;
+    //ofSetLineWidth(thickness);
+    ///add colors
+
+    renderer.drawWireFrame(false);
+    ofPopStyle();
+    
+    glDisable(GL_DEPTH_TEST);
+    cam.end();
+    
+    modelTarget.end();
+    //STOP RENDER MODEL TARGET
+	//////////////////////////
+
+    
+    //////////////////////////
+    //START RENDER POINTS
     renderTarget.begin();
     ofClear(0);
     
     cam.begin(ofRectangle(0,0,1920,1080));
-//    ofDrawGrid();
     
-    ofPushStyle();
-    ofSetColor(255);
-//  renderer.drawWireFrame(false);
-    ofPopStyle();
+    ofEnableAlphaBlending();
     
     //RENDERER
-    //glPointSize(4);
     ofPushStyle();
     glPushMatrix();
     glScalef(1,-1,1);
@@ -283,8 +437,8 @@ void testApp::draw(){
         pointCloudDOF.begin();
         pointCloudDOF.setUniform1f("minSize", timeline.getKeyframeValue("Min Point Size"));
         pointCloudDOF.setUniform1f("maxSize", timeline.getKeyframeValue("Max Point Size"));
-        pointCloudDOF.setUniform1f("focalRange", timeline.getKeyframeValue("Focal Range"));
-        pointCloudDOF.setUniform1f("focalDistance", timeline.getKeyframeValue("Focal Distance"));
+        pointCloudDOF.setUniform1f("focalRange", focalRange);
+        pointCloudDOF.setUniform1f("focalDistance", focalDistance);
     }
     else{
     	glPointSize(timeline.getKeyframeValue("Min Point Size"));
@@ -297,25 +451,159 @@ void testApp::draw(){
     if(useShaderToggle){
         pointCloudDOF.end();    	
     }
+    
+    if(showType){
+        ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
+        for(int i = 0; i < emmiters.size(); i++){
+            for(int v = 0; v < emmiters[i].particles.size(); v++){
+                if(emmiters[i].particles[v].hasType){
+//                    cout << "FOUND TYPE ON GENERATOR " << i << " PARTICLE " << v << " energy percent " << emmiters[i].particles[v].energyPercent << endl;
+                    //ofSetColor(255, 255, 255, emmiters[i].particles[v].energyPercent*255);
+                    //ofSetColor(255, 255, 255, emmiters[i].particles[v].energyPercent*255);
+                    float fade = emmiters[i].particles[v].energyPercent*255;
+                    ofSetColor(fade,fade,fade);
+                    ofDrawBitmapString(ofToString(int(emmiters[i].particles[v].energy)), emmiters[i].particles[v].position);
+                }
+            }
+        }
+    }
     glPopMatrix();
     ofPopStyle();
-    
-    //debugDrawOrigins();
-    
+
     cam.end();
-    
     renderTarget.end();
+	//STOP RENDER POINTS
+	//////////////////////////
+
+    //////////////////////////
+	// COMP THE WIREFRAME INTO THE POINTS
+    //////////////////////////
+	blurBuffer.begin();
+    ofClear(0);
+    
+    ofPushStyle();
+    ofEnableBlendMode(OF_BLENDMODE_SCREEN);
+    
+    ofSetColor(255);
+    dofBlur.begin();
+    
+    //mulit-text
+    //our shader uses two textures, the top layer and the alpha
+    //we can load two textures into a shader using the multi texture coordinate extensions
+    glActiveTexture(GL_TEXTURE0_ARB);
+    modelTarget.getTextureReference().bind();
+    
+    glActiveTexture(GL_TEXTURE1_ARB);
+    focusChannel.getTextureReference().bind();
+    float blurAmount = timeline.getKeyframeValue("DOF Blur");
+    dofBlur.setUniform2f("sampleOffset", blurAmount, 0);
+    //draw a quad the size of the frame
+    glBegin(GL_QUADS);
+    
+    //move the mask around with the mouse by modifying the texture coordinates
+    glMultiTexCoord2d(GL_TEXTURE0_ARB, 0, 0);
+    glMultiTexCoord2d(GL_TEXTURE1_ARB, 0, 0);		
+    glVertex2f(0, 0);
+    
+    glMultiTexCoord2d(GL_TEXTURE0_ARB, 1920, 0);
+    glMultiTexCoord2d(GL_TEXTURE1_ARB, 1920, 0);		
+    glVertex2f(1920, 0);
+    
+    glMultiTexCoord2d(GL_TEXTURE0_ARB, 1920, 1080);
+    glMultiTexCoord2d(GL_TEXTURE1_ARB, 1920, 1080);
+    glVertex2f(1920, 1080);
+    
+    glMultiTexCoord2d(GL_TEXTURE0_ARB, 0, 1080);
+    glMultiTexCoord2d(GL_TEXTURE1_ARB, 0, 1080);		
+    glVertex2f(0, 1080);
+    
+    glEnd();
+    
+    
+    //deactive and clean up
+    glActiveTexture(GL_TEXTURE1_ARB);
+    focusChannel.getTextureReference().unbind();
+    
+    glActiveTexture(GL_TEXTURE0_ARB);
+    modelTarget.getTextureReference().unbind();
+    
+    dofBlur.end();
+    
+    ofPopStyle();
+    
+    blurBuffer.end();     
+    
+    modelTarget.begin();
+    ofClear(0.0,0.0,0.0,0.0);
+    
+    ofPushStyle();
+    ofEnableBlendMode(OF_BLENDMODE_SCREEN);
+    
+    ofSetColor(255, 255, 255, 255);
+    dofBlur.begin();
+    
+    //mulit-text
+    //our shader uses two textures, the top layer and the alpha
+    //we can load two textures into a shader using the multi texture coordinate extensions
+    //canabalize the 
+    glActiveTexture(GL_TEXTURE0_ARB);
+    blurBuffer.getTextureReference().bind();
+    
+    glActiveTexture(GL_TEXTURE1_ARB);
+    focusChannel.getTextureReference().bind();
+    
+    dofBlur.setUniform2f("sampleOffset", 0, blurAmount);
+    glBegin(GL_QUADS);
+    
+    //move the mask around with the mouse by modifying the texture coordinates
+    glMultiTexCoord2d(GL_TEXTURE0_ARB, 0, 0);
+    glMultiTexCoord2d(GL_TEXTURE1_ARB, 0, 0);		
+    glVertex2f(0, 0);
+    
+    glMultiTexCoord2d(GL_TEXTURE0_ARB, 1920, 0);
+    glMultiTexCoord2d(GL_TEXTURE1_ARB, 1920, 0);		
+    glVertex2f(1920, 0);
+    
+    glMultiTexCoord2d(GL_TEXTURE0_ARB, 1920, 1080);
+    glMultiTexCoord2d(GL_TEXTURE1_ARB, 1920, 1080);
+    glVertex2f(1920, 1080);
+    
+    glMultiTexCoord2d(GL_TEXTURE0_ARB, 0, 1080);
+    glMultiTexCoord2d(GL_TEXTURE1_ARB, 0, 1080);		
+    glVertex2f(0, 1080);
+    
+    glEnd();
+    
+    //deactive and clean up
+    glActiveTexture(GL_TEXTURE1_ARB);
+    focusChannel.getTextureReference().unbind();
+    
+    glActiveTexture(GL_TEXTURE0_ARB);
+    blurBuffer.getTextureReference().unbind();
+    
+    dofBlur.end();
+    
+    //COMP IN THE POINTS
+    renderTarget.draw(0, 0);
+    
+    ofPopStyle();
+    
+    modelTarget.end();
+
+    //NOW MODEL TARGET HAS THE DOF"d Wireframe + POINTS
+    
+    //COMP
     
     ofPushStyle();
     ofSetColor(0);
     ofRect(fboRect);
     ofPopStyle();
 
-    renderTarget.getTextureReference().draw(fboRect); 
+    modelTarget.getTextureReference().draw(fboRect); 
     if(renderOutput){
-        renderTarget.getTextureReference().readToPixels(savingImage.getPixelsRef());
+        modelTarget.getTextureReference().readToPixels(savingImage.getPixelsRef());
         char filename[512];        		
-        sprintf(filename, "%s/save_%05d_%05d.png", currentSaveFolder.c_str(), framesSaved, timeline.getCurrentFrame());
+        sprintf(filename, "%s/save_frame_%05d.png", currentSaveFolder.c_str(), timeline.getCurrentFrame());
         savingImage.saveImage(filename);
 		framesSaved++;
     }
