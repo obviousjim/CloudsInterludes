@@ -51,6 +51,13 @@ class testApp : public ofBaseApp
     ofxButton clear;
     ofxButton useDofBlur;
     ofxToggle showType;
+    ofxToggle freezeParticles;
+    ofxToggle useColors;
+    ofxButton loadPalette;
+    ofxToggle drawPointcloud;
+    
+    ofxParameter<float> cameraSpeed;
+    ofxSlider<float> cameraSpeedSlider;
     
     float luminosityChannel;
     
@@ -67,6 +74,7 @@ class testApp : public ofBaseApp
     ofFbo modelTarget;
     ofFbo blurBuffer;
     ofFbo fbo2;
+    ofImage colorPalette;
     
     ofxGameCamera cam;
     ofxRGBDRenderer renderer;

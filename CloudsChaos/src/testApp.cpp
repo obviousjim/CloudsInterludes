@@ -27,7 +27,7 @@ void testApp::setup(){
     cam.setup();
     cam.usemouse = true;
     cam.autosavePosition = true;
-    cam.speed = 20;
+    cam.speed = cameraSpeed = 20;
     cam.setScale(1, -1, 1);
     cam.targetNode.setScale(1, -1, 1);
     cam.loadCameraPosition();
@@ -106,14 +106,20 @@ void testApp::setup(){
     panel.add(reloadShaders.setup("reload shader", false));
     panel.add(showType.setup("show type", false));
     panel.add(clear.setup("clear", false));
+    panel.add(cameraSpeedSlider.setup("camera speed", cameraSpeed, .5, 40));
+    panel.add(freezeParticles.setup("freeze particles", false));
+    panel.add(useColors.setup("use palette", false));
+    panel.add(loadPalette.setup("load palette", false));
+	panel.add(drawPointcloud.setup("draw pointcloud", false));
     
     renderOutput = false; // force false
     framesSaved = 0;
-    
+
     ofxXmlSettings defaults;
     defaults.loadFile("defaults.xml");
     string defaultTake = defaults.getValue("take", "");
     string defaultComp = defaults.getValue("comp", "");
+    string defaultPalette = defaults.getValue("palette", "");
     if(defaultTake != "" && take.loadFromFolder(defaultTake)){
 
         renderer.setup(take.calibrationDirectory);
@@ -138,6 +144,10 @@ void testApp::setup(){
         currentSaveFolder = defaultComp + "EXPORTS";
     }
     
+    if(defaultPalette != ""){
+        colorPalette.loadImage(defaultPalette);
+    }
+
     //setup forces
     perlinForce = new CloudInterludeForcePerlin();
     dragForce   = new CloudInterludeForceDrag();
@@ -155,6 +165,7 @@ void testApp::setup(){
     for(int i = 0; i < absoluteMaxParticles; i++){
     	mesh.addVertex(ofVec3f(0,0,0));
         mesh.addColor(ofFloatColor(1.0,1.0,1.0,1.0));
+        mesh.addTexCoord(ofVec2f(0.0,0.0));
     }
 
     loadShaders();
@@ -195,6 +206,19 @@ void testApp::update(){
 			defaults.saveFile();
         }
     }
+    
+    if(loadPalette){
+        ofFileDialogResult r = ofSystemLoadDialog("Load Palette", false);
+        if(r.bSuccess){
+			colorPalette.loadImage(r.getPath());
+            
+            ofxXmlSettings defaults;
+            defaults.loadFile("defaults.xml");
+            defaults.setValue("palette", r.getPath());
+			defaults.saveFile();
+        }
+    }
+    
     track.lockCameraToTrack = lockToTrackToggle;
     if(lockToTrackToggle){
         cam.targetNode.setPosition(cam.getPosition());
@@ -205,7 +229,9 @@ void testApp::update(){
     if(resetCamera){
         cam.reset();
     }
-        
+     
+    cam.speed = cameraSpeed;
+    
     //VIEW
     float fboHeight = ofGetHeight() - timeline.getDrawRect().height - 28;
     float fboWidth = 1920./1080 * fboHeight;
@@ -231,6 +257,8 @@ void testApp::update(){
     }
     
     if(needsUpdate){
+        
+        renderer.calculateTextureCoordinates = useColors && colorPalette.isAllocated();
         renderer.update();
 
         //modify the colors
@@ -307,6 +335,7 @@ void testApp::update(){
     totalParticles = 0;
     for(int i = 0; i < emmiters.size(); i++){
     	emmiters[i].birthRate = 0;
+        emmiters[i].freeze = freezeParticles;
         totalParticles += emmiters[i].particles.size();
     }
 
@@ -319,6 +348,7 @@ void testApp::update(){
             g.lifespan  = lifeSpan;
             g.lifespanVariance = lifeSpanVariance;
             g.position = renderer.getMesh().getVertex( renderer.vertexIndex(i) );
+            g.texcoord = renderer.getMesh().getTexCoord( renderer.vertexIndex(i) );
             g.remainingParticles = maxParticles - totalParticles;
             g.showType = showType;
             g.typeChance = typeChance;
@@ -328,6 +358,7 @@ void testApp::update(){
     for(int i = 0; i < emmiters.size(); i++){
     	emmiters[i].update();
     }
+
     
     //put the particles in the mesh;
     copyVertsToMesh();        
@@ -335,13 +366,15 @@ void testApp::update(){
 
 void testApp::loadShaders(){
 	pointCloudDOF.load("shaders/DOFCloud");
+    pointCloudDOF.begin();
+    pointCloudDOF.setUniform1i("tex", 0);
+    pointCloudDOF.end();
     dofRange.load("shaders/dofrange");
     dofBlur.load("shaders/dofblur");
     dofBlur.begin();
     dofBlur.setUniform1i("tex", 0);
     dofBlur.setUniform1i("range", 1);
     dofBlur.end();
-
 }
 
 //--------------------------------------------------------------
@@ -408,8 +441,14 @@ void testApp::draw(){
     //thickness *= thickness;
     //ofSetLineWidth(thickness);
     ///add colors
-
-    renderer.drawWireFrame(false);
+	if(!drawPointcloud){
+		renderer.drawWireFrame(false);    
+    }
+    else{
+        glPointSize(timeline.getKeyframeValue("Min Point Size"));
+        renderer.drawPointCloud(false);    
+    }
+    
     ofPopStyle();
     
     glDisable(GL_DEPTH_TEST);
@@ -418,7 +457,6 @@ void testApp::draw(){
     modelTarget.end();
     //STOP RENDER MODEL TARGET
 	//////////////////////////
-
     
     //////////////////////////
     //START RENDER POINTS
@@ -428,7 +466,6 @@ void testApp::draw(){
     cam.begin(ofRectangle(0,0,1920,1080));
     
     ofEnableAlphaBlending();
-    
     //RENDERER
     ofPushStyle();
     glPushMatrix();
@@ -439,33 +476,65 @@ void testApp::draw(){
         pointCloudDOF.setUniform1f("maxSize", timeline.getKeyframeValue("Max Point Size"));
         pointCloudDOF.setUniform1f("focalRange", focalRange);
         pointCloudDOF.setUniform1f("focalDistance", focalDistance);
+        pointCloudDOF.setUniform1i("useTexture", useColors && colorPalette.isAllocated() ? 1 : 0);
     }
     else{
     	glPointSize(timeline.getKeyframeValue("Min Point Size"));
     }
     
+    if(useColors && colorPalette.isAllocated()){
+    	colorPalette.bind();
+    }
+//    if(drawPointcloud){
+//        ofPushMatrix();
+//        ofScale(1,-1,1);
+//        ofEnableAlphaBlending();
+//        renderer.drawPointCloud(false);    
+//        ofPopMatrix();
+//	}
+
     ofEnableBlendMode(OF_BLENDMODE_ADD);
     glEnable(GL_POINT_SMOOTH); // makes circular points
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);	// allows per-point size
+    
     mesh.drawVertices();
+    
+    if(useColors && colorPalette.isAllocated()){
+		colorPalette.unbind();    	
+    }
+
     if(useShaderToggle){
         pointCloudDOF.end();    	
     }
-    
+
     if(showType){
+        ofEnableBlendMode(OF_BLENDMODE_ADD);
+        ofPushStyle();
+        float baseLineAlpha = timeline.getKeyframeValue("Line Alpha");
+        //ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
         ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
         for(int i = 0; i < emmiters.size(); i++){
             for(int v = 0; v < emmiters[i].particles.size(); v++){
                 if(emmiters[i].particles[v].hasType){
-//                    cout << "FOUND TYPE ON GENERATOR " << i << " PARTICLE " << v << " energy percent " << emmiters[i].particles[v].energyPercent << endl;
-                    //ofSetColor(255, 255, 255, emmiters[i].particles[v].energyPercent*255);
-                    //ofSetColor(255, 255, 255, emmiters[i].particles[v].energyPercent*255);
-                    float fade = emmiters[i].particles[v].energyPercent*255;
-                    ofSetColor(fade,fade,fade);
-                    ofDrawBitmapString(ofToString(int(emmiters[i].particles[v].energy)), emmiters[i].particles[v].position);
+                    float fade = emmiters[i].particles[v].energyPercent;
+                    if(fade > 0){
+                        ofSetColor(fade*255,fade*255,fade*255);
+ //                       ofTranslate(emmiters[i].particles[v].position);
+//                        ofScale(10, -10, 10);
+                        ofDrawBitmapString(ofToString(int(emmiters[i].particles[v].energy)), emmiters[i].particles[v].position);
+//                        ofDrawBitmapString(ofToString(int(emmiters[i].particles[v].energy)), ofVec3f(0,0,0));
+   //                     ofPopMatrix();
+                        float lineAlpha = baseLineAlpha*fade;
+                        if(lineAlpha > 0){
+                            ofSetLineWidth(1);
+                            ofSetColor(lineAlpha*255, lineAlpha*255, lineAlpha*255);
+                            ofLine(emmiters[i].particles[v].position,emmiters[i].particles[v].origin);
+                    	}
+                	}
                 }
             }
         }
+		ofPopStyle();
     }
     glPopMatrix();
     ofPopStyle();
@@ -557,7 +626,7 @@ void testApp::draw(){
     
     //move the mask around with the mouse by modifying the texture coordinates
     glMultiTexCoord2d(GL_TEXTURE0_ARB, 0, 0);
-    glMultiTexCoord2d(GL_TEXTURE1_ARB, 0, 0);		
+    glMultiTexCoord2d(GL_TEXTURE1_ARB, 0, 0);
     glVertex2f(0, 0);
     
     glMultiTexCoord2d(GL_TEXTURE0_ARB, 1920, 0);
@@ -628,13 +697,15 @@ void testApp::copyVertsToMesh(){
     int meshIndex = 0;    
     vector<ofVec3f>& meshVertices = mesh.getVertices();
     vector<ofFloatColor>& meshColors = mesh.getColors();
-    
+    vector<ofVec2f>& meshTexCoords = mesh.getTexCoords();
     for(int i = 0; i < emmiters.size(); i++){
-
         for(int v = 0; v < emmiters[i].particles.size(); v++){
             meshVertices[meshIndex] = emmiters[i].particles[v].position;
             float color = emmiters[i].particles[v].energy / emmiters[i].particles[v].initialEnergy;
             meshColors[meshIndex] = ofFloatColor(color,color,color,color);
+            if(useColors){
+                meshTexCoords[meshIndex] = emmiters[i].particles[v].texcoord;
+            }
             meshIndex++;
             if(meshIndex == meshVertices.size()){
                 ofLogError("exceeded max particles");

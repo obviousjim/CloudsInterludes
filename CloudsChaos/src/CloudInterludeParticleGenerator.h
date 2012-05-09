@@ -19,36 +19,39 @@ class CloudInterludeParticleGenerator {
         lifespan = 200;
         numToBear = ofRandom(0,1);
         //setup forces
+        freeze = false;
     }
     
     void update(){
-        
-        numToBear += birthRate;
-        while(numToBear > 1.0 && remainingParticles > 0){
-            CloudInterludeParticle p;
-            p.energy = p.initialEnergy = lifespan + ofRandom(-lifespanVariance/2, lifespanVariance/2);
-            p.origin = p.position = position;
-            p.velocity = direction;
-            if(showType && ofRandomuf() < typeChance){
-                p.hasType = true;
+        if(!freeze){
+
+            numToBear += birthRate;
+            while(numToBear > 1.0 && remainingParticles > 0){
+                CloudInterludeParticle p;
+                p.energy = p.initialEnergy = lifespan + ofRandom(-lifespanVariance/2, lifespanVariance/2);
+                p.origin = p.position = position;
+                p.velocity = direction;
+                p.texcoord = texcoord;
+                if(showType && ofRandomuf() < typeChance){
+                    p.hasType = true;
+                }
+                particles.push_back(p);
+                numToBear--;
+                remainingParticles--;
             }
-            particles.push_back(p);
-            numToBear--;
-            remainingParticles--;
-        }
+            
+            //sacrifice the rest
+            numToBear -= int(numToBear);
         
-        //sacrifice the rest
-        numToBear -= int(numToBear);
+            for(int i = 0; i < forces.size(); i++){
+                forces[i]->applyForce(particles);
+            }
         
-        for(int i = 0; i < forces.size(); i++){
-            forces[i]->applyForce(particles);
-        }
-        
-//        for(int i = 0; i < particles.size(); i++){
-        for(int i = particles.size()-1; i >= 0; i--){
-            particles[i].update();
-            if(particles[i].energy < 0){
-                particles.erase(particles.begin() + i); 
+            for(int i = particles.size()-1; i >= 0; i--){
+                particles[i].update();
+                if(particles[i].energy < 0){
+                    particles.erase(particles.begin() + i); 
+                }
             }
         }
     }
@@ -66,25 +69,6 @@ class CloudInterludeParticleGenerator {
         ofPopStyle();
     }
     
-    /*
-    void drawParticleDebug(){
-        ofPushStyle();
-        glPointSize(4);
-        ofMesh m;
-        for(int i = 0; i < particles.size(); i++){
-            m.addVertex(particles[i].position);
-//            m.addColor(ofFloatColor(particles[i].energy/lifespan));
-//            if(particles[i].connectorEnergy > 0){
-//                ofLine(particles[i].position, particles[i].connectorPoint);
-//            }
-        }
-        m.drawVertices();
-        
-       // m.drawWireframe();
-        ofPopStyle();
-    }
-     */
-    
     vector<CloudInterludeParticle> particles;
     vector<CloudInterludeForce*> forces;
     
@@ -98,9 +82,12 @@ class CloudInterludeParticleGenerator {
     float lifespanVariance;
     ofVec3f position;
     ofVec3f direction;
-
+    ofVec2f texcoord;
+    
+    bool freeze;
     bool showType;
     float typeChance;
+    
   protected:
     float numToBear;
 };

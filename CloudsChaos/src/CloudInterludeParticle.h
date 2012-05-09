@@ -42,7 +42,7 @@ class CloudInterludeParticle {
     ofVec3f position;
     ofVec3f velocity;
     ofVec3f force;
-    
+    ofVec2f texcoord;
     ofVec3f direction;
     
 };
