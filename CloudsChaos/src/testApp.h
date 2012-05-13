@@ -44,7 +44,6 @@ class testApp : public ofBaseApp
     ofxToggle lockToTrackToggle;
     ofxToggle useShaderToggle;
     ofxButton reloadShaders;
-    ofxButton saveCameraPoint;
     ofxToggle renderOutput;
     ofxButton setCompDirectory;
     ofxButton resetCamera;
@@ -55,12 +54,19 @@ class testApp : public ofBaseApp
     ofxToggle useColors;
     ofxButton loadPalette;
     ofxToggle drawPointcloud;
+    ofxToggle applyMeshDistort;
+    ofxToggle depthRangeMultiply;
+    ofxButton setImplodePoint;
+    ofxToggle drawImplodeDebug;
+    ofVec3f implodePoint;
     
     ofxParameter<float> cameraSpeed;
     ofxSlider<float> cameraSpeedSlider;
     
     float luminosityChannel;
-    
+    float distortionChannel;
+    bool saveCameraPoint;
+
     int framesSaved;
     bool createdFolder;
     string currentSaveFolder;

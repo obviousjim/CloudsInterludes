@@ -1,11 +1,6 @@
 #include "testApp.h"
 
-//Wireframe/Point DOF
 //Mesh Distortion
-//Mesh Luminosity
-//Wind force
-//Color map
-//Typographic effect
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -20,9 +15,9 @@ void testApp::setup(){
     modelTarget.allocate(1920, 1080, GL_RGB, 4);
     blurBuffer.allocate(1920, 1080, GL_RGB, 4);
     
-    renderer.setSimplification(2);
     renderer.forceUndistortOff = true;
-    renderer.addColors = true;
+    renderer.addColors = true;    
+    renderer.setSimplification(2);
     
     cam.setup();
     cam.usemouse = true;
@@ -39,6 +34,7 @@ void testApp::setup(){
     currentSaveFolder = "EXPORT_" + ofToString(ofGetMonth()) + "_" + ofToString(ofGetDay()) + "_" + ofToString(ofGetHours()) + ofToString(ofGetMinutes());
     savingImage.allocate(1920, 1080, OF_IMAGE_COLOR);
 	createdFolder = false;
+    saveCameraPoint = false;
     
     track.setCamera(cam);
     track.setXMLFileName("cameraMoves.xml");
@@ -54,7 +50,7 @@ void testApp::setup(){
     timeline.addElement("Track", &track);
     
     timeline.addPage("Rendering");
-    timeline.addKeyframes("Simplify", "zthreshold.xml", ofRange(0, 8 ), 2);
+    timeline.addKeyframes("Simplify", "simplify.xml", ofRange(0, 8 ), 2);
     timeline.addKeyframes("Z Threshold", "zthreshold.xml", ofRange(0, sqrtf(5000) ), sqrtf(5000));
     timeline.addKeyframes("Edge Snip", "edgesnip.xml", ofRange(0, sqrtf(2000) ), sqrtf(2000));
 
@@ -86,17 +82,19 @@ void testApp::setup(){
     
     timeline.addPage("Mesh Distort");
     timeline.addKeyframes("Mesh Implode", "meshImplode.xml", ofRange(1.0, 2500), 1.0 );
-    timeline.addKeyframes("Mesh Perlin Amplitude", "meshPerlinAmplitude.xml", ofRange(0, sqrtf(20)) );
-    timeline.addKeyframes("Mesh Perlin Density", "meshPerlinDensity.xml", ofRange(0, sqrtf(2000)));
-    timeline.addKeyframes("Mesh Perlin Speed", "meshPerlinSpeed.xml", ofRange(0, sqrtf(2)), 0);
-    
+    timeline.addKeyframes("Mesh Perlin Amp", "meshPerlinAmp.xml", ofRange(0, 200.0) );
+    timeline.addKeyframes("Mesh Perlin Density", "meshPerlinDensity.xml", ofRange(0, 200.0) );
+    timeline.addKeyframes("Mesh Perlin Speed", "meshPerlinSpeed.xml", ofRange(0, 1.0) );    
+
     timeline.addPage("Typography");
     timeline.addKeyframes("Type Alpha", "typeAlpha.xml", ofRange(0,1));
 	timeline.addKeyframes("Chance of Attaching Type", "typeChance.xml", ofRange(0,0.5) );
 	timeline.addKeyframes("Line Alpha", "lineAlpha.xml", ofRange(0,1.0) );
 
-    luminosityChannel = 0; //for mesh perlin
-        
+     //for mesh perlin
+    luminosityChannel = 0;
+    distortionChannel = 0;    
+    
     panel.setup("Settings", "settings.xml");
     panel.add(setCompDirectory.setup("load comp"));
     panel.add(renderOutput.setup("render", false));
@@ -111,6 +109,10 @@ void testApp::setup(){
     panel.add(useColors.setup("use palette", false));
     panel.add(loadPalette.setup("load palette", false));
 	panel.add(drawPointcloud.setup("draw pointcloud", false));
+    panel.add(applyMeshDistort.setup("apply distort", false));
+    panel.add(setImplodePoint.setup("set implode point", false));
+    panel.add(drawImplodeDebug.setup("draw implode point", false));
+    panel.add(depthRangeMultiply.setup("depth range mult", false));
     
     renderOutput = false; // force false
     framesSaved = 0;
@@ -128,14 +130,6 @@ void testApp::setup(){
         renderer.setDepthImage(depthImages.currentDepthRaw);
         timeline.setDurationInFrames(depthImages.videoThumbs.size());
         
-//        alignment.loadPairingFile(take.pairingsFile);
-//        movie.loadMovie(take.lowResVideoPath);
-//        movie.setUseTexture(false);
-//        movie.play();
-//        movie.setSpeed(0);
-//        playerElement.setVideoPlayer(movie, take.videoThumbsPath);
-//		  timeline.addElement("Video", &playerElement);
-//        timeline.setDurationInFrames(movie.getDuration());
     }
     
     if(defaultComp != ""){
@@ -148,6 +142,9 @@ void testApp::setup(){
         colorPalette.loadImage(defaultPalette);
     }
 
+    implodePoint = ofVec3f(defaults.getValue("implodex", 0),
+                           defaults.getValue("implodey", 0),
+                           defaults.getValue("implodez", 0));
     //setup forces
     perlinForce = new CloudInterludeForcePerlin();
     dragForce   = new CloudInterludeForceDrag();
@@ -226,6 +223,18 @@ void testApp::update(){
         cam.rotationX = cam.targetXRot = -cam.getHeading();
         cam.rotationY = cam.targetYRot = -cam.getPitch();
     }
+    
+    if(setImplodePoint){
+        implodePoint = cam.getPosition();
+        implodePoint.y *= -1;
+        ofxXmlSettings defaults;
+        defaults.loadFile("defaults.xml");
+        defaults.setValue("implodex", implodePoint.x);
+        defaults.setValue("implodey", implodePoint.y);
+        defaults.setValue("implodez", implodePoint.z);
+        defaults.saveFile();
+        
+    }
     if(resetCamera){
         cam.reset();
     }
@@ -267,11 +276,16 @@ void testApp::update(){
         float luminDensity  = timeline.getKeyframeValue("Wireframe Perlin Density");
         float luminContrast = timeline.getKeyframeValue("Wireframe Lumin Contrast");
         float luminExponent = timeline.getKeyframeValue("Wireframe Lumin Exponent");
-                
         luminosityChannel += luminSpeed;
         
+        float perlinAmp = timeline.getKeyframeValue("Mesh Perlin Amp");
+        float perlinDensity = timeline.getKeyframeValue("Mesh Perlin Density");
+        float perlinSpeed = timeline.getKeyframeValue("Mesh Perlin Speed");
+        distortionChannel += perlinSpeed;
+
         vector<ofFloatColor>& colors = renderer.getMesh().getColors();
         vector<ofVec3f>& verts = renderer.getMesh().getVertices();
+
         for(int i = 0; i < renderer.getTotalPoints(); i++){
             if(renderer.isVertexValid(i)){
                 int vertexIndex = renderer.vertexIndex(i);
@@ -283,33 +297,27 @@ void testApp::update(){
             	alpha = (alpha - .05f) * luminContrast + 0.5f;
                 alpha = 1 - powf(alpha, luminExponent);
                 alpha *= wireframeAlpha;
-                colors[vertexIndex] = ofFloatColor(1.0,1.0,1.0,alpha);
-            }
-        }
-        
-        /*
-        //now distort the mesh
-        float implode = timeline.getKeyframeValue("Mesh Implode");
-        float implodeSqr = implode*implode;
-        ofVec3f zero(0,0,0);
-        for(int i = 0; i < renderer.getTotalPoints(); i++){
-            if(renderer.isVertexValid(i)){
-                int vertexIndex = renderer.vertexIndex(i);                
-                
-                //float alpha = ofMap(verts[vertexIndex].length(), implode, implode-2000, 1.0, 0.0, true);
-                //float effect = implode - verts[vertexIndex].length();
-                
-                if(alpha == 0){
-                    //verts[vertexIndex] *= 1.0/(effect+1.);
-                    verts[vertexIndex] = zero;
+                if(vertexIndex < colors.size()){
+                    colors[vertexIndex] = ofFloatColor(1.0,1.0,1.0,alpha);
                 }
-                else if(alpha != 1.0){
-                    verts[vertexIndex].getInterpolated(zero, alpha);
-                }
+                
+                if(applyMeshDistort){
+                    ofVec3f originalvert = vert;
+                    float meshImplodeRadius = timeline.getKeyframeValue("Mesh Implode");
+                    ofVec3f toImplodePoint = (vert - implodePoint);
+                    float distToImplode = toImplodePoint.length();
+                    toImplodePoint /= distToImplode; //normalize
+                    if(distToImplode < meshImplodeRadius){
+                        vert -= toImplodePoint * MIN(distToImplode, powf(meshImplodeRadius - distToImplode, 1.2) );
+                        
+                        vert += ofVec3f(ofSignedNoise(originalvert.x/perlinDensity, originalvert.y/perlinDensity, originalvert.z/perlinDensity, distortionChannel)*perlinAmp,
+                                        ofSignedNoise(originalvert.z/perlinDensity, originalvert.x/perlinDensity, originalvert.y/perlinDensity, distortionChannel)*perlinAmp,
+                                        ofSignedNoise(originalvert.y/perlinDensity, originalvert.z/perlinDensity, originalvert.x/perlinDensity, distortionChannel)*perlinAmp );
 
+                    }                    
+                }
             }
         }
-		*/
     }
     
     
@@ -348,7 +356,9 @@ void testApp::update(){
             g.lifespan  = lifeSpan;
             g.lifespanVariance = lifeSpanVariance;
             g.position = renderer.getMesh().getVertex( renderer.vertexIndex(i) );
-            g.texcoord = renderer.getMesh().getTexCoord( renderer.vertexIndex(i) );
+            if(useColors && colorPalette.isAllocated()){
+                g.texcoord = renderer.getMesh().getTexCoord( renderer.vertexIndex(i) );
+            }
             g.remainingParticles = maxParticles - totalParticles;
             g.showType = showType;
             g.typeChance = typeChance;
@@ -472,6 +482,7 @@ void testApp::draw(){
     glScalef(1,-1,1);
     if(useShaderToggle){
         pointCloudDOF.begin();
+        if(depthRangeMultiply) focalRange *= 10;
         pointCloudDOF.setUniform1f("minSize", timeline.getKeyframeValue("Min Point Size"));
         pointCloudDOF.setUniform1f("maxSize", timeline.getKeyframeValue("Max Point Size"));
         pointCloudDOF.setUniform1f("focalRange", focalRange);
@@ -493,7 +504,8 @@ void testApp::draw(){
 //        ofPopMatrix();
 //	}
 
-    ofEnableBlendMode(OF_BLENDMODE_ADD);
+    //ofEnableBlendMode(OF_BLENDMODE_ADD);
+    ofEnableBlendMode(OF_BLENDMODE_SCREEN);
     glEnable(GL_POINT_SMOOTH); // makes circular points
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);	// allows per-point size
     
@@ -519,11 +531,7 @@ void testApp::draw(){
                     float fade = emmiters[i].particles[v].energyPercent;
                     if(fade > 0){
                         ofSetColor(fade*255,fade*255,fade*255);
- //                       ofTranslate(emmiters[i].particles[v].position);
-//                        ofScale(10, -10, 10);
                         ofDrawBitmapString(ofToString(int(emmiters[i].particles[v].energy)), emmiters[i].particles[v].position);
-//                        ofDrawBitmapString(ofToString(int(emmiters[i].particles[v].energy)), ofVec3f(0,0,0));
-   //                     ofPopMatrix();
                         float lineAlpha = baseLineAlpha*fade;
                         if(lineAlpha > 0){
                             ofSetLineWidth(1);
@@ -536,7 +544,16 @@ void testApp::draw(){
         }
 		ofPopStyle();
     }
+    
+    if(drawImplodeDebug){
+        ofNoFill();
+        ofSetColor(255, 0, 0);
+        ofSphere(implodePoint, 20);
+    }
+    
     glPopMatrix();
+    
+
     ofPopStyle();
 
     cam.end();
