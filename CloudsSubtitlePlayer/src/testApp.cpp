@@ -1,16 +1,17 @@
 
+
 #include "testApp.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){
+    
     ofBackground(0);
     ofSetFrameRate(30);
+    
     p.loadMovie("/Users/focus/Desktop/Clouds_Eyebeam5.10.12_LowRes.mov");
-	p.setFrame(4000);
     p.play();
 
 	subtitles.setup("Clouds_20minSub_FINAL.srt","sazanami-gothic.ttf", 12);
-    ftglFontTest.loadFont("sazanami-gothic.ttf", 30);
 }
 
 //--------------------------------------------------------------
@@ -20,9 +21,9 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+    
 	p.draw(0,0, 1280, 720);
     subtitles.setTimeInSeconds(p.getPosition()*p.getDuration());
-    subtitles.drawToScreen(ofGetWidth()/2, ofGetHeight()/2);
 }
 
 

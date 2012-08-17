@@ -23,6 +23,4 @@ class testApp : public ofBaseApp{
 	ofVideoPlayer p;
 	ofxSubtitles subtitles;
     
-	ofxFTGLFont ftglFontTest;
-    ofTrueTypeFont ttf;
 };
