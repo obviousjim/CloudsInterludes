@@ -28,10 +28,11 @@
 		E7C305EF15DE1833003BD208 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7C305E915DE1833003BD208 /* tinyxmlerror.cpp */; };
 		E7C305F015DE1833003BD208 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7C305EA15DE1833003BD208 /* tinyxmlparser.cpp */; };
 		E7C305F115DE1833003BD208 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7C305EC15DE1833003BD208 /* ofxXmlSettings.cpp */; };
+		E7C3062715DE2E27003BD208 /* ofxSubtitles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7C3060D15DE2E26003BD208 /* ofxSubtitles.cpp */; };
+		E7C3062815DE2E27003BD208 /* ofxSubtitleUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7C3060F15DE2E26003BD208 /* ofxSubtitleUnit.cpp */; };
 		E7E077E515D3B63C0020DFD4 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */; };
 		E7E077E815D3B6510020DFD4 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E715D3B6510020DFD4 /* QTKit.framework */; };
 		E7F29EA615DB3C0A0016AF67 /* ofxTimecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7F29E9D15DB3C090016AF67 /* ofxTimecode.cpp */; };
-		E7F29EAF15DB3C1C0016AF67 /* ofxSubtitles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7F29EAD15DB3C1C0016AF67 /* ofxSubtitles.cpp */; };
 		E7F29EE415DB3E950016AF67 /* ofTextConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7F29ED715DB3E950016AF67 /* ofTextConverter.cpp */; };
 		E7F29EE515DB3E950016AF67 /* ofUnicode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7F29ED915DB3E950016AF67 /* ofUnicode.cpp */; };
 		E7F29EE615DB3E950016AF67 /* ofUTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7F29EDB15DB3E950016AF67 /* ofUTF8.cpp */; };
@@ -126,14 +127,15 @@
 		E7C305EA15DE1833003BD208 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		E7C305EC15DE1833003BD208 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
 		E7C305ED15DE1833003BD208 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
+		E7C3060D15DE2E26003BD208 /* ofxSubtitles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxSubtitles.cpp; sourceTree = "<group>"; };
+		E7C3060E15DE2E26003BD208 /* ofxSubtitles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxSubtitles.h; sourceTree = "<group>"; };
+		E7C3060F15DE2E26003BD208 /* ofxSubtitleUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxSubtitleUnit.cpp; sourceTree = "<group>"; };
+		E7C3061015DE2E26003BD208 /* ofxSubtitleUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxSubtitleUnit.h; sourceTree = "<group>"; };
 		E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		E7E077E715D3B6510020DFD4 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		E7F29E9B15DB3C090016AF67 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		E7F29E9D15DB3C090016AF67 /* ofxTimecode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTimecode.cpp; sourceTree = "<group>"; };
 		E7F29E9E15DB3C090016AF67 /* ofxTimecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTimecode.h; sourceTree = "<group>"; };
-		E7F29EAB15DB3C1C0016AF67 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		E7F29EAD15DB3C1C0016AF67 /* ofxSubtitles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxSubtitles.cpp; sourceTree = "<group>"; };
-		E7F29EAE15DB3C1C0016AF67 /* ofxSubtitles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxSubtitles.h; sourceTree = "<group>"; };
 		E7F29EC615DB3E950016AF67 /* checked.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = checked.h; sourceTree = "<group>"; };
 		E7F29EC715DB3E950016AF67 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		E7F29EC815DB3E950016AF67 /* unchecked.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unchecked.h; sourceTree = "<group>"; };
@@ -270,10 +272,10 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				E7C3060615DE2E26003BD208 /* ofxSubtitles */,
 				E7C305E515DE1832003BD208 /* ofxXmlSettings */,
 				E7F29EEF15DB622F0016AF67 /* ofxFTGL */,
 				E7F29EB015DB3E950016AF67 /* ofxUnicode */,
-				E7F29EAA15DB3C1C0016AF67 /* ofxSubtitles */,
 				E7F29E8F15DB3C080016AF67 /* ofxTimecode */,
 			);
 			name = addons;
@@ -387,6 +389,26 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		E7C3060615DE2E26003BD208 /* ofxSubtitles */ = {
+			isa = PBXGroup;
+			children = (
+				E7C3060C15DE2E26003BD208 /* src */,
+			);
+			name = ofxSubtitles;
+			path = ../../../addons/ofxSubtitles;
+			sourceTree = "<group>";
+		};
+		E7C3060C15DE2E26003BD208 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				E7C3060D15DE2E26003BD208 /* ofxSubtitles.cpp */,
+				E7C3060E15DE2E26003BD208 /* ofxSubtitles.h */,
+				E7C3060F15DE2E26003BD208 /* ofxSubtitleUnit.cpp */,
+				E7C3061015DE2E26003BD208 /* ofxSubtitleUnit.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		E7F29E8F15DB3C080016AF67 /* ofxTimecode */ = {
 			isa = PBXGroup;
 			children = (
@@ -402,25 +424,6 @@
 			children = (
 				E7F29E9E15DB3C090016AF67 /* ofxTimecode.h */,
 				E7F29E9D15DB3C090016AF67 /* ofxTimecode.cpp */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		E7F29EAA15DB3C1C0016AF67 /* ofxSubtitles */ = {
-			isa = PBXGroup;
-			children = (
-				E7F29EAB15DB3C1C0016AF67 /* README.md */,
-				E7F29EAC15DB3C1C0016AF67 /* src */,
-			);
-			name = ofxSubtitles;
-			path = ../../../addons/ofxSubtitles;
-			sourceTree = "<group>";
-		};
-		E7F29EAC15DB3C1C0016AF67 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				E7F29EAE15DB3C1C0016AF67 /* ofxSubtitles.h */,
-				E7F29EAD15DB3C1C0016AF67 /* ofxSubtitles.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -776,7 +779,6 @@
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* testApp.cpp in Sources */,
 				E7F29EA615DB3C0A0016AF67 /* ofxTimecode.cpp in Sources */,
-				E7F29EAF15DB3C1C0016AF67 /* ofxSubtitles.cpp in Sources */,
 				E7F29EE415DB3E950016AF67 /* ofTextConverter.cpp in Sources */,
 				E7F29EE515DB3E950016AF67 /* ofUnicode.cpp in Sources */,
 				E7F29EE615DB3E950016AF67 /* ofUTF8.cpp in Sources */,
@@ -815,6 +817,8 @@
 				E7C305EF15DE1833003BD208 /* tinyxmlerror.cpp in Sources */,
 				E7C305F015DE1833003BD208 /* tinyxmlparser.cpp in Sources */,
 				E7C305F115DE1833003BD208 /* ofxXmlSettings.cpp in Sources */,
+				E7C3062715DE2E27003BD208 /* ofxSubtitles.cpp in Sources */,
+				E7C3062815DE2E27003BD208 /* ofxSubtitleUnit.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

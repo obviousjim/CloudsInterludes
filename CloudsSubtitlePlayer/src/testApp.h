@@ -20,7 +20,8 @@ class testApp : public ofBaseApp{
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
 
-	ofVideoPlayer p;
+	//ofVideoPlayer p;
+    ofQTKitPlayer p;
 	ofxSubtitles subtitles;
     
 };
