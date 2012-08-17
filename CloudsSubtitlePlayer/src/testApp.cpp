@@ -54,7 +54,17 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-
+	if(key == ' ' && p.isLoaded()){
+		if(p.isPlaying()){
+            p.stop();
+        }
+        else{
+            p.play();
+        }
+    }
+    if(key == 'f'){
+        ofToggleFullscreen();
+    }
 }
 
 //--------------------------------------------------------------
