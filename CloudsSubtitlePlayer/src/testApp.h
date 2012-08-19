@@ -23,5 +23,6 @@ class testApp : public ofBaseApp{
 	//ofVideoPlayer p;
     ofQTKitPlayer p;
 	ofxSubtitles subtitles;
-    
+    float fontPos;
+    int fontSize;
 };

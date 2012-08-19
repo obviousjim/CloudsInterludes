@@ -10,14 +10,25 @@ void testApp::setup(){
     ofSetVerticalSync(true);
     ofSetFrameRate(30);
     
+    fontSize = 30;
+    fontPos = .8;
+    ofToggleFullscreen();
+    ofHideCursor();
+    
     ofxXmlSettings settings;
-    subtitles.loadFont("AxisStd-Regular.otf", 30);
     if(settings.loadFile("localsettings.xml")){
-	    p.loadMovie(settings.getValue("video", ""), OF_QTKIT_DECODE_TEXTURE_ONLY);
-        p.setLoopState(OF_LOOP_NORMAL);
-        p.play();
+        fontSize = settings.getValue("fontsize", 30);
+        fontPos = settings.getValue("fontpos", .8);
+        subtitles.loadFont("AxisStd-Regular.otf", fontSize);
+	    if(p.loadMovie(settings.getValue("video", ""), OF_QTKIT_DECODE_TEXTURE_ONLY)){
+            p.setLoopState(OF_LOOP_NORMAL);
+            p.play();
+        }
         subtitles.load(settings.getValue("titles", ""));
-        p.play();
+		cout << "font size is " << fontSize << " font position " << fontPos << endl;
+    }
+    else {
+        cout << "failed to load file " << endl;
     }
 
 }
@@ -42,7 +53,7 @@ void testApp::draw(){
         
 		p.draw(drawRect.x,drawRect.y,drawRect.width,drawRect.height);
         
-        ofPoint drawPoint = ofPoint(ofGetWidth()/2, ofGetHeight() * .8);
+        ofPoint drawPoint = ofPoint(ofGetWidth()/2, ofGetHeight() * fontPos);
         
         ofSetColor(0);
         subtitles.draw(drawPoint+ofPoint(1.5,1.5));
@@ -64,6 +75,12 @@ void testApp::keyPressed(int key){
     }
     if(key == 'f'){
         ofToggleFullscreen();
+        if(ofGetWindowMode() == OF_FULLSCREEN){
+            ofHideCursor();
+        }
+        else{
+            ofShowCursor();
+        }
     }
 }
 
