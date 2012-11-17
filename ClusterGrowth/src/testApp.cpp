@@ -24,10 +24,10 @@ void testApp::setup(){
 	gui.add(heroRadiusVariance.setup("radius var", ofxParameter<float>(), 5, 1000));
 	gui.add(numIterations.setup("num iterations", ofxParameter<int>(), 1, 20));
 	gui.add(numBranches.setup("num branches", ofxParameter<int>(), 1, 20));
+	gui.add(numSurvivingBranches.setup("surviving branches", ofxParameter<int>(), 1, 10));
 	gui.add(minDistance.setup("min branch dist", ofxParameter<float>(), 10, 1000));
 	gui.add(distanceRange.setup("branch dist rng", ofxParameter<float>(), 0, 3.0));
 	gui.add(stepSize.setup("step size", ofxParameter<float>(), 1, 300));
-	gui.add(numSurvivingBranches.setup("surviving branches", ofxParameter<int>(), 1, 10));
 	gui.add(numPointsAtReplicate.setup("points at replicate",ofxParameter<int>(), 10, 1000));
 	gui.add(replicatePointDistance.setup("replicate distance",ofxParameter<float>(), 5, 500));
 	gui.add(pointSize.setup("replicate point size",ofxParameter<float>(), 1, 5));
@@ -49,7 +49,7 @@ void testApp::setup(){
 
 	timeline.setFrameRate(24);
 	timeline.setFrameBased(true);
-	timeline.setDurationInFrames(10*24);
+	timeline.setDurationInFrames(25*24);
 	timeline.addTrack("camera", &camTrack);
 	camTrack.setCamera(cam);
 
@@ -68,6 +68,16 @@ void testApp::update(){
 	fboRect.scaleTo(fboContainer);
 	fboRect.x = 200;
 	cam.applyRotation = cam.applyTranslation = fboRect.inside(mouseX, mouseY) && !camTrack.lockCameraToTrack;
+	
+	int vertsToHighlight = traversal.getVertices().size()*timeline.getPercentComplete();
+	for(int i = 0; i < vertsToHighlight; i++){;
+		float fade = ofMap(i, vertsToHighlight*.9, vertsToHighlight, 1.0, 0, true);
+		traversal.setColor(i, ofFloatColor(fade, 0,0, 1.0));
+	}
+	
+	for(int i = vertsToHighlight; i < traversal.getVertices().size(); i++){
+		traversal.setColor(i, ofFloatColor(0));
+	}
 
 }
 
@@ -103,10 +113,11 @@ void testApp::draw(){
 	
 	if(rendering && timeline.getIsPlaying()){
 		char fileName[1024];
-		sprintf(fileName, "%sframe_%05d.png", frameNum++, renderFolder.c_str());
+		sprintf(fileName, "%sframe_%05d.png", renderFolder.c_str(), frameNum++);
 		ofImage image;
 		image.setUseTexture(false);
 		renderTarget.readToPixels(image.getPixelsRef());
+		image.mirror(true, false);
 		image.saveImage(string(fileName));
 	}
 	
@@ -194,48 +205,49 @@ void testApp::traverse(){
 	
 	traversal.clear();
 
+	
 	int numTries = 0;
-	while(n1 != n2 && numTries < 1000){
+	ofVec3f position = n1->position;
+	ofVec3f direction = (n2->position - n1->position).normalized();
+	cout << "traversing " << position << " to " << n2->position << endl;
+	while(position.distance(n2->position) > 50 && numTries < 10000){
 		ofVec3f dirToTarget = (n2->position - n1->position);
 		Node* nextNode = NULL;
-		float highScore = -10000;
-		float minDistanceFound = 1000000;
-		for(int i = n1->startIndex; i < n1->endIndex; i++){
-			traversal.addVertex(geometry.getVertices()[i]);
-		}
-//		traversal.addVertex(n1->position);
+		traversal.addColor(ofFloatColor(0));
+		traversal.addVertex(position);
+		
+		ofVec3f force(0,0,0);
 		for(int i = 0; i < nodes.size(); i++){
-			if(nodes[i] != n1){
-				ofVec3f dirToNode = (nodes[i]->position - n1->position);
-				float length = dirToNode.length();
-//				if(length < minDistance){
-//					minDistance = length;
-//				}
-//
-				if(length > maxTraverseDistance){
-//					cout << "node is too far " << length << " max distance " << maxTraverseDistance << endl;
-					continue;
-				}
-				
-				float positionScore = ofMap(dirToNode.length(), 0, maxTraverseDistance, 1.0, .0, true);
-				positionScore = 0;
-				float angleScore = 1. - (dirToTarget.angle(dirToNode) / maxTraverseAngle);
-				if(positionScore + angleScore > highScore){
-					highScore = positionScore + angleScore;
-					nextNode = nodes[i];
-				}
+			ofVec3f dirToNode = (nodes[i]->position - position);
+			float length = dirToNode.length();
+			dirToNode.normalize();
+			if(length < 5){
+				cout << "node is too close " << length << " max distance " << maxTraverseDistance << endl;
+				continue;
 			}
+			
+			float positionScore = ofMap(length, 0, maxTraverseDistance, 1.0, 0.0, true);
+			float angleScore = 1. - (dirToTarget.angle(dirToNode) / maxTraverseAngle);
+			force += dirToNode * positionScore * angleScore;
 		}
 		
-		if(nextNode == NULL){
-			cout  << minDistanceFound << " min distance. bailed!" << endl;
+		if(force.lengthSquared() == 0){
+			cout << "no force!!" << endl;
 			break;
 		}
-		cout << "jumped from node " << n1->position << " to node " << nextNode->position << " with score " << highScore << " moving towards node " << n2->position << endl;
-		n1 = nextNode;
+
+		cout << "Moved from " << position;
+		direction += force;
+		direction.normalize();
+		position += direction * stepSize;
+		cout << " to " << position << " with force " << force << endl;
+		
+
 		numTries++;
 	}
+	traversal.addColor(ofFloatColor(0));
 	traversal.addVertex(n2->position);
+	cout << "traversing took " << traversal.getVertices().size() << " steps " << endl;
 }
 
 //--------------------------------------------------------------

@@ -59,9 +59,12 @@ class testApp : public ofBaseApp{
 	ofxToggle drawParticles;
 	ofxToggle supressPlay;
 	
+	ofxIntSlider numAmbientParticles;
+	ofxIntSlider particleBoxWidth;
+	ofxIntSlider particleBoxHeight;
+	ofxIntSlider particleBoxDepth;
+
 	//START NODE STRUCTURES
-	 
-	
 	
 	ParticleRenderer particleRenderer;
 	
@@ -90,7 +93,7 @@ class testApp : public ofBaseApp{
 	
 	void loadShader();
 	
-	void genrateAmbientParticles();
+	void generateAmbientParticles();
 	ofVboMesh ambientParticles;
 	
 	void generateClusters();

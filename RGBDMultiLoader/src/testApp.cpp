@@ -118,7 +118,12 @@ void testApp::setup(){
 	gui.add(drawPointcloud.setup("draw pointcloud",ofxParameter<bool>()));
 	gui.add(drawParticles.setup("draw particles",ofxParameter<bool>()));
 	gui.add(supressPlay.setup("supress play",ofxParameter<bool>()));
-	
+
+	gui.add(numAmbientParticles.setup("num ambient", ofxParameter<int>(), 500, 100000));
+	gui.add(particleBoxWidth.setup("ap box width", ofxParameter<int>(), 500, 3000));
+	gui.add(particleBoxHeight.setup("ap box height", ofxParameter<int>(), 500, 3000));
+	gui.add(particleBoxDepth.setup("ap box depth", ofxParameter<int>(), 3000, 10000));
+
     gui.loadFromFile("defaultSettings.xml");
     
 	currentFrameNumber = 0;
@@ -131,7 +136,8 @@ void testApp::setup(){
     //attemping to load the last scene
     loadDefaultScene();
 	
-	genrateAmbientParticles();
+	if(numAmbientParticles < 0 ) numAmbientParticles = 50000;
+	generateAmbientParticles();
 	//generateClusters();
 	
 	
@@ -145,11 +151,12 @@ void testApp::setup(){
 }
 
 
-void testApp::genrateAmbientParticles(){
-	for(int i = 0; i < 50000; i++){
-		ambientParticles.addVertex(ofVec3f(ofRandom(-1000, 1000.),
-										   ofRandom(-1000, 1000.),
-										   ofRandom(0, 3000.)));
+void testApp::generateAmbientParticles(){
+	ambientParticles.clear();
+	for(int i = 0; i < numAmbientParticles; i++){
+		ambientParticles.addVertex(ofVec3f(ofRandom(-particleBoxWidth, particleBoxWidth),
+										   ofRandom(-particleBoxHeight, particleBoxHeight),
+										   ofRandom(0, particleBoxDepth)));
 	}
 }
 
@@ -184,8 +191,6 @@ void testApp::generateSubClusters(ofVec3f center, int maxSubs, float maxRadius){
 	}
 	 
 	 */
-	
-	
 	
 }
 
@@ -555,6 +560,10 @@ void testApp::keyPressed(int key){
 	
 	if(key == '1'){
 		particleRenderer.sampleTextureColors(player.getVideoPlayer()->getPixelsRef());
+	}
+	
+	if(key == 'P'){
+		generateAmbientParticles();
 	}
 }
 

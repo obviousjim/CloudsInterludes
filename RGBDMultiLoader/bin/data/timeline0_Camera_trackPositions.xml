@@ -1,15 +1,15 @@
 <positions>
     <element name="cam">
         <x>0.000000000</x>
-        <y>683.000000000</y>
+        <y>834.000000000</y>
         <width>1920.000000000</width>
-        <height>40.000000000</height>
+        <height>28.000000000</height>
     </element>
     <element name="notes">
         <x>0.000000000</x>
-        <y>775.000000000</y>
+        <y>898.000000000</y>
         <width>1920.000000000</width>
-        <height>40.000000000</height>
+        <height>22.000000000</height>
     </element>
     <element name="pause video">
         <x>0.000000000</x>
@@ -19,9 +19,9 @@
     </element>
     <element name="scene">
         <x>0.000000000</x>
-        <y>729.000000000</y>
+        <y>868.000000000</y>
         <width>1920.000000000</width>
-        <height>40.000000000</height>
+        <height>24.000000000</height>
     </element>
     <element name="x offset">
         <x>0.000000000</x>
@@ -31,15 +31,15 @@
     </element>
     <element name="x shift">
         <x>0.000000000</x>
-        <y>821.000000000</y>
+        <y>926.000000000</y>
         <width>1920.000000000</width>
-        <height>143.000000000</height>
+        <height>50.000000000</height>
     </element>
     <element name="y shift">
         <x>0.000000000</x>
-        <y>970.000000000</y>
+        <y>982.000000000</y>
         <width>1920.000000000</width>
-        <height>59.000000000</height>
+        <height>47.000000000</height>
     </element>
     <element name="z offset">
         <x>0.000000000</x>
