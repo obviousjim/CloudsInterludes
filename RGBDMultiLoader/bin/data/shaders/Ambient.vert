@@ -6,7 +6,7 @@ uniform float minSize;
 
 const float PI = 3.14159265;
 //const float maxSize = 32.;
-varying float colorOnly;
+
 void main() {
 	//get the homogeneous 2d position
   	//gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
@@ -22,12 +22,19 @@ void main() {
 	//gl_TexCoord[0] = gl_MultiTexCoord0;
 
 	gl_Position = ftransform();
+	if(gl_Position.z < 0.){
+		gl_Position.z = (2000. + gl_Position.z);
+	}
+
 	gl_TexCoord[0] = gl_MultiTexCoord0;
-	colorOnly = gl_Normal.x;
+	gl_FrontColor = gl_Color * vec4(.5);
+	float fade = max(2000. - gl_Position.z, 0.) / 2000.;
+	gl_FrontColor.a = fade;
+	gl_PointSize = fade * 4.;
 	
     //float scale = min(1.0, abs(gl_Position.z - focalDistance) / focalRange);
     //gl_PointSize = scale * (maxSize - minSize) + minSize;
-	//gl_FrontColor = gl_Color;
+//	gl_FrontColor = gl_Color;
     //gl_FrontColor.a = 1.0 - (gl_PointSize - minSize) / (maxSize - minSize);
 	//gl_TexCoord[0] = gl_MultiTexCoord0;
 

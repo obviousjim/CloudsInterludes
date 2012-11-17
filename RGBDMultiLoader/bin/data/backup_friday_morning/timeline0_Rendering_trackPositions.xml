@@ -1,0 +1,32 @@
+<positions>
+    <element name="Point Alpha">
+        <x>0.000000000</x>
+        <y>116.000000000</y>
+        <width>1024.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="Point Size">
+        <x>0.000000000</x>
+        <y>162.000000000</y>
+        <width>1024.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="Wireframe Alpha">
+        <x>0.000000000</x>
+        <y>208.000000000</y>
+        <width>1024.000000000</width>
+        <height>41.000000000</height>
+    </element>
+    <element name="Wireframe Thickness">
+        <x>0.000000000</x>
+        <y>255.000000000</y>
+        <width>1024.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="Z Threshold">
+        <x>0.000000000</x>
+        <y>70.000000000</y>
+        <width>1024.000000000</width>
+        <height>40.000000000</height>
+    </element>
+</positions>

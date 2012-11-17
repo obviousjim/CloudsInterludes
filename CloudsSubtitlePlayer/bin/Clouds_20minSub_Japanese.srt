@@ -1,0 +1,1135 @@
+1
+0:0:0,0 --> 0:0:0,0
+FirstLine
+SecondLine
+
+2
+0:0:45,583 --> 0:0:49,125
+With programming it's a... 
+you can do whatever you want. 
+
+3
+0:0:49,291 --> 0:0:52,916
+And at some point you, it's...
+
+4
+0:0:53,458 --> 0:0:56,875
+Um, I wouldn't say biblical, but it's like 
+there's nothing in the beginning 
+
+5
+0:0:57,208 --> 0:1:0,125
+Or, or just as you have in history 
+it's just an empty space 
+
+6
+0:1:0,750 --> 0:1:2,875
+and you can start throwing things in there. 
+
+7
+0:1:5,208 --> 0:1:8,458
+Well, what I want to do when I,
+I want to program like I can think. 
+
+8
+0:1:8,541 --> 0:1:14,625
+So like ten years ago I painted a lot,
+and I want to get the same feeling with code. 
+
+9
+0:1:16,583 --> 0:1:18,416
+Programming is like a superpower. 
+
+10
+0:1:18,708 --> 0:1:21,916
+There's so many things that you want to do 
+that you could do by hand 
+
+11
+0:1:22,0 --> 0:1:26,750
+and it would take you a long time but if,
+like, programming just increases your capabilities
+
+12
+0:1:27,125 --> 0:1:28,916
+you know, almost exponentially. 
+
+13
+0:1:31,708 --> 0:1:34,41
+I've always been fascinated by computers. 
+
+14
+0:1:34,250 --> 0:1:37,708
+I think Jobs, quite, is particularly interesting. 
+
+15
+0:1:37,833 --> 0:1:41,125
+You know, saying that computers
+are bicycles for the mind. 
+
+16
+0:1:41,333 --> 0:1:44,333
+You know just a human on it's own is just a human. 
+
+17
+0:1:44,458 --> 0:1:49,750
+But with the addition of a bicycle
+we'll become the most efficient biped out there. 
+
+18
+0:1:50,83 --> 0:1:52,791
+And the computer I think holds 
+the same thing in terms of 
+
+19
+0:1:52,833 --> 0:1:55,125
+the possibilities of what we can do with our creativity. 
+
+20
+0:1:55,375 --> 0:1:59,291
+And when you have that computer to support you 
+you can create incredible things. 
+
+21
+0:2:0,750 --> 0:2:2,83
+I addicted myself.
+
+22
+0:2:2,958 --> 0:2:8,625
+And, I'm highly addicted to programming.
+You can't stop me, sometimes I forget to eat.
+
+23
+0:2:9,125 --> 0:2:10,250
+Sometimes I forget to sleep.
+
+24
+0:2:10,791 --> 0:2:12,458
+And...
+
+25
+0:2:14,333 --> 0:2:16,583
+I don't know, can you turn a pickle back into a cucumber?
+
+26
+0:2:16,833 --> 0:2:20,791
+Probably not. So I'm here for life.
+You've got me, it's terminal. 
+
+27
+0:2:24,708 --> 0:2:27,125
+You are sculpting possibility space.
+
+28
+0:2:27,333 --> 0:2:31,333
+Which sounds big, but in a way that's what it is.
+
+29
+0:2:31,666 --> 0:2:36,791
+You're adding with those little lego bricks
+of code and language that you have.
+
+30
+0:2:37,416 --> 0:2:40,666
+Put them together and you add more possibilities.
+
+31
+0:2:40,833 --> 0:2:46,208
+And with every new brick, basically
+your possibilities increase, uh, many times.
+
+32
+0:2:46,250 --> 0:2:52,458
+And that's, in a way this adding and taking away,
+that's kind of the design process now.
+
+33
+0:2:52,708 --> 0:2:55,41
+It'sÉ I still feel in control.
+
+34
+0:2:55,250 --> 0:2:58,666
+Uh, but I like to be surprised.
+I think that's the beauty of it.
+
+35
+0:2:59,0 --> 0:3:4,750
+Um, the thing when a system goes beyond
+what you naturally understand it to do.
+
+36
+0:3:4,833 --> 0:3:8,125
+And sometimes you have something that surprises you.
+
+37
+0:3:8,916 --> 0:3:11,250
+And I always look for that, that one moment, basically.
+
+38
+0:3:11,916 --> 0:3:14,958
+In my practice as an artist,
+I've always been interested about the universe
+
+39
+0:3:15,41 --> 0:3:20,41
+and the scale of the universe that's around us.
+Especially in comparison to us.
+
+40
+0:3:20,375 --> 0:3:24,666
+And, uh, and I think kind of the commercial work that I do
+
+41
+0:3:24,708 --> 0:3:27,333
+it's really about trying to take people into the moment.
+
+42
+0:3:27,500 --> 0:3:30,541
+I'm really trying to get people into that kind of feeling
+
+43
+0:3:30,666 --> 0:3:33,83
+where you're not thinking about your past, or your future.
+
+44
+0:3:33,291 --> 0:3:34,666
+That you're really in the now.
+
+45
+0:3:41,0 --> 0:3:42,83
+[clears his throat]
+
+46
+0:3:42,666 --> 0:3:44,83
+I dream in code.
+
+47
+0:3:44,791 --> 0:3:46,333
+One time I woke up and I said:
+
+48
+0:3:47,333 --> 0:3:48,958
+Rebecca! What time is it?
+And then I said:
+
+49
+0:3:49,333 --> 0:3:52,708
+I think it's January 11111111111!
+Like that.
+
+50
+0:3:53,958 --> 0:3:58,83
+In 1999, I was making out with my girlfriend 
+Anne Marie
+
+51
+0:3:58,791 --> 0:4:0,708
+and I fell asleep because I was very tired.
+
+52
+0:4:0,875 --> 0:4:5,416
+And I could see the function with a block of code
+with if then statements and for loops
+
+53
+0:4:5,500 --> 0:4:10,0
+describing the, um... the kiss.
+
+54
+0:4:19,333 --> 0:4:24,958
+I think, coding and technology in general
+informatic technology is the thing
+
+55
+0:4:25,0 --> 0:4:29,166
+that defines our time right now
+and as an artist, I feel like
+
+56
+0:4:29,458 --> 0:4:34,83
+my job is to explore this stuff that defines our time right now.
+
+57
+0:4:34,541 --> 0:4:37,500
+Not the stuff that defined our time 100 years ago.
+
+58
+0:4:37,625 --> 0:4:40,0
+So, I just got into it naturally.
+
+59
+0:4:43,583 --> 0:4:47,583
+You know we have people who write demos in 256 bytes. 
+
+60
+0:4:47,750 --> 0:4:53,708
+These are 256 numbers strung together
+to create an image or an animation
+
+61
+0:4:54,125 --> 0:4:57,375
+and everyone goes WOW, how did they do that?
+
+62
+0:4:57,583 --> 0:5:1,375
+And this is incredible, because the way actually
+you can only achieve this by
+
+63
+0:5:1,500 --> 0:5:5,125
+knowing every single bit about the technology underneath.
+
+64
+0:5:5,333 --> 0:5:12,375
+Knowing what command to use in which position
+so you can actually reuse the code as data
+
+65
+0:5:12,500 --> 0:5:16,41
+to create something else.
+And it's incredibly cryptic
+
+66
+0:5:16,125 --> 0:5:19,708
+but it shows incredible mental strength 
+and intelligence 
+
+67
+0:5:19,750 --> 0:5:21,416
+to actually achieve something  like that.
+
+68
+0:5:21,666 --> 0:5:27,166
+Like it's a way to interface with these things
+that's on a very basic level of the way that we
+
+69
+0:5:27,500 --> 0:5:32,416
+you know, process our experience.
+And I think that's like a big problem with software.
+
+70
+0:5:32,500 --> 0:5:34,791
+It's so abstracted on so many levels.
+
+71
+0:5:34,875 --> 0:5:40,916
+You know data on it's own is just noise.
+If no one processes that data it's meaningless.
+
+72
+0:5:41,166 --> 0:5:44,541
+It's really just dust, you know?
+
+73
+0:5:44,708 --> 0:5:48,0
+And that's what I really find interesting about the demo scene
+
+74
+0:5:48,41 --> 0:5:50,583
+because it's actually, people are really focused
+
+75
+0:5:50,750 --> 0:5:55,750
+on producing such compressed 
+versions of information.
+
+76
+0:5:55,791 --> 0:5:57,916
+Not data. Code is information.
+
+77
+0:5:58,125 --> 0:5:59,541
+It's not random noise.
+
+78
+0:5:59,750 --> 0:6:6,875
+That information can actually create a physical
+emotional feedback in the viewer.
+
+79
+0:6:7,83 --> 0:6:11,291
+And I find this really incredible.
+And the code is so microscopic
+
+80
+0:6:11,333 --> 0:6:12,791
+it can be easily shared.
+
+81
+0:6:15,0 --> 0:6:20,416
+And it was like, um, I liked it visually.
+Just because of the shapes you got.
+
+82
+0:6:20,708 --> 0:6:24,916
+But I also liked it in a sense of, um
+...experimenting.
+
+83
+0:6:25,125 --> 0:6:31,41
+So it was like, I couldn't do this with actual water in a tank.
+
+84
+0:6:31,208 --> 0:6:34,791
+But here I can do it on a smaller scale.
+
+85
+0:6:35,541 --> 0:6:39,708
+And, just imagine what it might look like.
+
+86
+0:6:52,291 --> 0:6:55,291
+There's a guy I know who made this project
+
+87
+0:6:55,666 --> 0:6:57,791
+it was just these strings in a box, and it was called Wiremap.
+
+88
+0:6:57,958 --> 0:7:1,708
+And you were able to present like, 3D objects inside it
+
+89
+0:7:2,291 --> 0:7:4,333
+like dynamically, using these really cheap materials.
+
+90
+0:7:4,375 --> 0:7:5,625
+It was really inspiring, it was like
+
+91
+0:7:5,875 --> 0:7:10,500
+a video projector, which you can get ahold of
+almost anywhere now, and some strings in a box.
+
+92
+0:7:11,83 --> 0:7:14,916
+But all the string's like perfectly laid out,
+so each one of them casts, catches
+
+93
+0:7:15,250 --> 0:7:17,625
+a different column of pixels from the projector.
+
+94
+0:7:18,666 --> 0:7:23,875
+So I started recreating this project and I worked 
+a lot in like how to make it more advanced
+
+95
+0:7:23,958 --> 0:7:25,291
+in terms of the algorithms behind it.
+
+96
+0:7:25,541 --> 0:7:28,208
+So there's now an interest in really thinking about interface.
+
+97
+0:7:28,250 --> 0:7:30,166
+So on one hand that's quite interesting
+
+98
+0:7:30,541 --> 0:7:34,958
+And then, but I think what's more exciting is that
+uh, is the people hacking them.
+
+99
+0:7:35,0 --> 0:7:40,500
+And that those communities are going to
+discover actually the more interesting things.
+
+100
+0:7:41,291 --> 0:7:45,416
+I think you get to a point in large visualizations where
+
+101
+0:7:45,458 --> 0:7:48,375
+it's just actually too much data to look at as a flat image
+
+102
+0:7:48,416 --> 0:7:55,0
+and you have to do some sort of zooming or
+you know, flying through navigation to get
+
+103
+0:7:55,708 --> 0:8:1,41
+I don't know, to focus on some small part of it
+because it's, there's so many examples of this like
+
+104
+0:8:1,375 --> 0:8:4,916
+huge hairball of connections
+and like it means nothing, at some point.
+
+105
+0:8:5,208 --> 0:8:8,750
+And he is basically explaining 
+how the database works
+
+106
+0:8:9,416 --> 0:8:11,541
+and he says there's one point here,
+
+107
+0:8:11,875 --> 0:8:15,791
+and then you go around and then there is another
+audio sample there, and another one there
+
+108
+0:8:15,875 --> 0:8:18,916
+and because this is closer this is the
+one which is matched.
+
+109
+0:8:19,0 --> 0:8:20,41
+[laughs]
+
+110
+0:8:20,208 --> 0:8:22,0
+And he explains everything like that.
+
+111
+0:8:22,375 --> 0:8:25,750
+I think like for a little while people'd still be
+doing this thing with augmented reality
+
+112
+0:8:25,833 --> 0:8:28,166
+where they'd get like an iPad out and
+they'd put it in front of something.
+
+113
+0:8:28,208 --> 0:8:30,750
+but that's just ridiculous.
+It's never going to be like that eventually.
+
+114
+0:8:30,791 --> 0:8:33,291
+It's all going to be about like,
+you go around the world
+
+115
+0:8:33,333 --> 0:8:34,916
+and things happen that 
+couldn't have happened before.
+
+116
+0:8:35,0 --> 0:8:36,875
+You can see something. 
+I mean you might be looking
+
+117
+0:8:36,916 --> 0:8:39,166
+over here and you might, 
+this thing might pop up that says
+
+118
+0:8:39,625 --> 0:8:40,833
+here's a read-out from this thing.
+
+119
+0:8:41,83 --> 0:8:43,0
+And it'd be perfectly rectified
+to the way you're looking at it
+
+120
+0:8:43,41 --> 0:8:44,916
+but somebody over there won't
+ be able to see it at all.
+
+121
+0:8:45,458 --> 0:8:48,416
+But you won't be wearing anything. You'll just be,
+
+122
+0:8:48,458 --> 0:8:50,875
+your environment is having this light cast onto it
+
+123
+0:8:50,958 --> 0:8:54,750
+because it's being scanned 
+and projected onto. And, uh
+
+124
+0:8:55,541 --> 0:8:58,625
+I think that's like, that's gonna be really interesting in the future.
+
+125
+0:8:59,750 --> 0:9:4,125
+It's very difficult to take your mind 
+out of what you are living
+
+126
+0:9:4,166 --> 0:9:6,250
+where everything is already so fast
+
+127
+0:9:6,291 --> 0:9:11,291
+and there's always a new app and and a new,
+a new innovation and something you want to try
+
+128
+0:9:11,666 --> 0:9:17,541
+because you just read about it so
+also the information like circulates so fast that
+
+129
+0:9:17,958 --> 0:9:21,666
+yeah, it's um... it's really difficult
+to project yourself in the future
+
+130
+0:9:21,875 --> 0:9:25,625
+because you feel almost like you are already
+living in some kind of future.
+
+131
+0:9:25,833 --> 0:9:31,416
+Even if you fantasize about having 
+a more powerful laptop.
+
+132
+0:9:32,666 --> 0:9:36,500
+Interviewer: "Is there an experience,
+a digital experience, that you desire to have?"
+
+133
+0:9:36,833 --> 0:9:43,708
+Oh yes, tele-transportation. Yeah. That's a, that's
+there are many things,
+
+134
+0:9:45,791 --> 0:9:50,500
+Yeah, there, there are many things, OK.
+Some I shouldn't talk about.
+
+135
+0:9:50,583 --> 0:9:55,416
+But yeah, tele-transportation, it's because, 
+you know there was a time when they would say
+
+136
+0:9:55,458 --> 0:10:0,666
+well with video conferences you won't need 
+to meet, but they don't work so well.
+
+137
+0:10:1,208 --> 0:10:5,958
+You still need to be with the people, to really
+discuss and work on projects.
+
+138
+0:10:6,41 --> 0:10:11,41
+You can do part of it by video conferences,
+
+139
+0:10:11,83 --> 0:10:14,250
+but it has its limits, so it means I have to travel.
+
+140
+0:10:14,291 --> 0:10:17,875
+I am sick of traveling. I waste so much time
+
+141
+0:10:18,791 --> 0:10:24,291
+in the airport, and waiting for trains,
+and I cannot work, so, I wish tele-transportation
+
+142
+0:10:24,625 --> 0:10:29,500
+Is it, is it possible? Is it going to be possible?
+I really want that.
+
+143
+0:10:32,333 --> 0:10:37,750
+You could start off with the point cloud of this.
+And then, I don't know, at some point when I say
+
+144
+0:10:37,875 --> 0:10:43,833
+talking about water or physical systems
+all the points could just flush, or
+
+145
+0:10:43,875 --> 0:10:45,0
+or turn into water, 
+
+146
+0:10:45,41 --> 0:10:51,375
+or something like that. Just to 
+illustrate the thing you've been talking about.
+
+147
+0:10:59,750 --> 0:11:4,0
+The footage is frameless, so because this
+footage is rendered in a 3D environment
+
+148
+0:11:4,166 --> 0:11:7,916
+and you have to look at it from some perspective
+you can browse anywhere in it
+
+149
+0:11:7,958 --> 0:11:11,375
+you can see just edges of it,
+or potentially multiple people
+
+150
+0:11:11,750 --> 0:11:14,83
+you know like floating heads or whatever,
+can be in the same space
+
+151
+0:11:14,125 --> 0:11:16,0
+or having a conversation that never happened.
+
+152
+0:11:16,208 --> 0:11:20,458
+Or objects can come in, 
+or parts of things can be taken out
+
+153
+0:11:20,750 --> 0:11:26,166
+um, that can illustrate what they're talking about.
+Or even simpler things like that, like 
+
+154
+0:11:26,458 --> 0:11:30,666
+the faces can fragment, 
+or um, the colors can change.
+
+155
+0:11:30,875 --> 0:11:34,458
+Or the camera angle can change even though
+this camera's been completely static.
+
+156
+0:11:34,708 --> 0:11:37,750
+There's just a lot of room to play.
+It's an experimentation.
+
+157
+0:11:37,875 --> 0:11:42,41
+You don't know what will work. There's no
+cinematic language that has evolved yet
+
+158
+0:11:42,166 --> 0:11:44,0
+so we're sort of at a point to define that.
+
+159
+0:11:44,500 --> 0:11:49,708
+[quiet overlapping voices]
+
+160
+0:11:49,750 --> 0:11:53,875
+It's the thing that comes after a video camera.
+It's the thing that comes after a camcorder.
+
+161
+0:11:54,958 --> 0:11:59,458
+It's a Kinect with a digital camera on it,
+I guess there's a sound microphone.
+
+162
+0:11:59,875 --> 0:12:3,458
+And there's this amazing blinding light.
+
+163
+0:12:6,708 --> 0:12:10,916
+I mean we definitely are stuck in that paradigm.
+
+164
+0:12:11,125 --> 0:12:12,541
+We're stuck in the mirror world, you know.
+
+165
+0:12:13,0 --> 0:12:18,83
+Like, I look at this, and I do this, and stare
+at myself in the screen that's like in here
+
+166
+0:12:18,125 --> 0:12:20,0
+you know, so that's an issue.
+
+167
+0:12:20,416 --> 0:12:22,833
+Andï¿½ I don't know how you could fix that.
+This is still a camera
+
+168
+0:12:22,958 --> 0:12:30,166
+it still has all of the like, dynamics and
+kind of set up that a camera makes, so
+
+169
+0:12:30,208 --> 0:12:32,666
+and like the politics of 
+the camera world, you know
+
+170
+0:12:33,83 --> 0:12:37,83
+I wouldn't want to have that inhibition there.
+I wouldn't want to have it sitting there
+
+171
+0:12:37,208 --> 0:12:42,333
+and reminding me to like, look at the image
+the way that the camera looked at it.
+
+172
+0:12:42,375 --> 0:12:47,41
+I mean, if that's 3D, then let's turn it inside out.
+Let's look at it from behind.
+
+173
+0:12:47,125 --> 0:12:51,541
+Let's break down the image that you get.
+
+174
+0:12:52,583 --> 0:12:56,666
+For me, I perceive a continuum between
+abstraction and figuration.
+
+175
+0:12:56,750 --> 0:13:1,333
+I see a place all along there where there's a lot
+of really interesting places to go
+
+176
+0:13:1,416 --> 0:13:3,958
+that communicate with us 
+in so many interesting ways.
+
+177
+0:13:9,500 --> 0:13:13,750
+And seeing a host of new aesthetic approaches
+coming into wider use
+
+178
+0:13:13,791 --> 0:13:18,41
+And seeing the very sort of non-photorealistic
+aspects of that film
+
+179
+0:13:18,875 --> 0:13:23,208
+that sort of made me excited for what
+we can accomplish if we just sort of
+
+180
+0:13:23,625 --> 0:13:29,375
+don't worry so much about duplicating reality
+and figure out how to create kinds of images
+
+181
+0:13:29,625 --> 0:13:31,958
+that have never been seen before.
+
+182
+0:13:45,791 --> 0:13:49,500
+Further into the future I think we could
+probably see autonomous cameras
+
+183
+0:13:50,500 --> 0:13:54,83
+Cameras that can hover, or move on their own.
+
+184
+0:13:54,583 --> 0:14:0,41
+And paint areas, creating you know
+ large sets of data
+
+185
+0:14:0,83 --> 0:14:2,625
+that you choose camera angles 
+out of after the fact.
+
+186
+0:14:5,750 --> 0:14:10,583
+And, uh, do my own performance, 
+and then blend that
+
+187
+0:14:11,83 --> 0:14:13,750
+with the existing point cloud 
+that you give me
+
+188
+0:14:14,41 --> 0:14:19,416
+so that I'm doing an additional 
+layer of extemporaneous performance 
+
+189
+0:14:20,291 --> 0:14:21,500
+which moves and changes.
+
+190
+0:14:21,666 --> 0:14:25,708
+One me this month, one me next month.
+And maybe another me the month after.
+
+191
+0:14:26,750 --> 0:14:30,541
+And have a different algorithmic 
+treatment per word.
+
+192
+0:14:33,583 --> 0:14:38,125
+But I just want to try and explore
+every path that it opens
+
+193
+0:14:38,208 --> 0:14:42,875
+And see what connections we can make
+and how we can build on that.
+
+194
+0:14:44,41 --> 0:14:47,416
+I hope there are no limitations and 
+I don't think there will be.
+
+195
+0:14:47,416 --> 0:14:50,916
+The only limitation is time, 
+and we probably won't live to 
+
+196
+0:14:52,375 --> 0:14:55,125
+see things we would think 
+is a limitation right now.
+
+197
+0:14:55,416 --> 0:14:57,791
+But I do think it gets more and more complex
+
+198
+0:14:58,375 --> 0:15:4,833
+And it's, I mean, it's such a young medium 
+as well. And it's evolving so fast
+
+199
+0:15:6,83 --> 0:15:8,500
+All this computation and power, I mean we...
+
+200
+0:15:8,583 --> 0:15:13,708
+if you look at where we are with our tools
+that we have available , um
+
+201
+0:15:14,333 --> 0:15:20,875
+we've got the basic needs covered.
+The basic input, output, interaction, rendering
+
+202
+0:15:21,41 --> 0:15:25,500
+That's, that's done. And people
+don't predict big advances there.
+
+203
+0:15:25,750 --> 0:15:28,625
+There's the limit of our physical senses
+
+204
+0:15:28,750 --> 0:15:35,125
+is kind of the limit of where real and virtual
+kind of overlaps and meets.
+
+205
+0:15:35,541 --> 0:15:37,83
+That's visible.
+
+206
+0:15:37,166 --> 0:15:44,250
+I mean, Tim Sweeney from Epic Games says that
+in 2020, at that point in time we'll have
+
+207
+0:15:44,458 --> 0:15:48,541
+graphics cards producing, 
+and 3D game engines producing
+
+208
+0:15:48,750 --> 0:15:53,750
+visuals that can fool our eyes believably enough
+
+209
+0:15:54,291 --> 0:15:59,708
+and, so all this extra computation power 
+from then on hopefully will be spent on
+
+210
+0:16:0,958 --> 0:16:5,375
+developing deeper knowledge systems
+that can do something like
+
+211
+0:16:5,500 --> 0:16:12,125
+modeling consciousness, or create more
+complex, deeper interactions.
+
+212
+0:16:12,375 --> 0:16:16,708
+And I think that's where 
+I'd love cinema to go to
+
+213
+0:16:17,0 --> 0:16:21,208
+where we can play with these virtual actors
+and we can interact with them
+
+214
+0:16:21,416 --> 0:16:25,458
+on a believable, deeper, human level.
+
+215
+0:16:26,41 --> 0:16:31,125
+Hopefully it'll all resolve into 
+one big noble conversation.
+
+216
+0:16:31,583 --> 0:16:34,375
+And there you can definitely 
+see the cumulative effects
+
+217
+0:16:34,625 --> 0:16:39,875
+of you know, an internet which is, or a network
+rather, of millions of neurons.
+
+218
+0:16:40,541 --> 0:16:48,458
+Kevin Kelly's observations of the complexity of
+the entire sphere of connected, um, computers
+
+219
+0:16:48,541 --> 0:16:52,458
+is approximately right now on the order of
+the same size as a single human brain.
+
+220
+0:16:52,750 --> 0:16:53,958
+And it is going to become 
+very interesting when that
+
+221
+0:16:54,0 --> 0:16:55,750
+becomes a hundred million
+ times more complicated.
+
+222
+0:16:56,416 --> 0:16:59,250
+Um, and that will be like 
+the greatest network ever built
+
+223
+0:16:59,333 --> 0:17:2,83
+and certainly we'll be able to do 
+some very interesting things
+
+224
+0:17:2,208 --> 0:17:7,833
+Um, I think of it as kind of the world 
+becoming one mind.
+
+225
+0:17:7,916 --> 0:17:11,625
+I think it's going to be more like that,
+than sort of the computers taking over
+
+226
+0:17:11,916 --> 0:17:12,833
+and, you know, Skynet.
+
+227
+0:17:13,291 --> 0:17:14,916
+Um, but maybe I'm an optimist.
+
+228
+0:17:15,750 --> 0:17:16,625
+Of sorts.
+
+229
+0:17:17,291 --> 0:17:21,708
+You always feel this layer of artificiality
+
+230
+0:17:22,41 --> 0:17:23,750
+which I'm, I'm...
+
+231
+0:17:24,125 --> 0:17:27,875
+I never managed to truly engage and feel comfortable there, so
+
+232
+0:17:28,166 --> 0:17:35,541
+um, so yeah, a virtual version world would 
+be good, but ones I've tested so far have not
+
+233
+0:17:36,125 --> 0:17:38,791
+I don't think they can replace physicality.
+
+234
+0:17:39,41 --> 0:17:41,666
+Doesn't mean that physicality cannot be replaced, but
+
+235
+0:17:41,708 --> 0:17:45,708
+what I've experienced so far 
+I was not very impressed.
+
+236
+0:17:45,916 --> 0:17:48,875
+What if you could capture the thinking of a person?
+
+237
+0:17:49,333 --> 0:17:52,458
+At one point, and then compare
+ it to another point
+
+238
+0:17:53,375 --> 0:17:59,41
+and like a really beautiful 
+multi-complex fractal, in a way.
+
+239
+0:17:59,333 --> 0:18:3,0
+And ideally I'd like to kind of put two
+next to each other 
+
+240
+0:18:3,41 --> 0:18:4,375
+and compare them or talk to them.
+
+241
+0:18:4,458 --> 0:18:5,375
+Explore them.
+
+242
+0:18:5,791 --> 0:18:7,750
+And, maybe that goes a bit far.
+
+243
+0:18:8,875 --> 0:18:13,791
+In theory you could build the whole universe
+inside a computer.
+
+244
+0:18:13,958 --> 0:18:15,833
+You just don't have enough power and then,
+
+245
+0:18:16,458 --> 0:18:19,625
+you'll never get there and it would be boring
+to build the same thing all over again.
+
+246
+0:18:19,750 --> 0:18:21,291
+But in theory, you could, and
+
+247
+0:18:21,708 --> 0:18:24,125
+that's something I find kind of stunning.
+

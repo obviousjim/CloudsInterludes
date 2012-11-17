@@ -24,10 +24,12 @@ void main() {
 	gl_Position = ftransform();
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 	colorOnly = gl_Normal.x;
+	gl_FrontColor = gl_Color;
+	gl_PointSize = gl_Normal.y;
 	
     //float scale = min(1.0, abs(gl_Position.z - focalDistance) / focalRange);
     //gl_PointSize = scale * (maxSize - minSize) + minSize;
-	//gl_FrontColor = gl_Color;
+	gl_FrontColor = gl_Color;
     //gl_FrontColor.a = 1.0 - (gl_PointSize - minSize) / (maxSize - minSize);
 	//gl_TexCoord[0] = gl_MultiTexCoord0;
 
