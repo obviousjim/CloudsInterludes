@@ -81,6 +81,8 @@
 		E72446E416573AD000D70E01 /* ofxEasingSine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E72446AF16573AD000D70E01 /* ofxEasingSine.cpp */; };
 		E72446E516573AD000D70E01 /* ofxTween.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E72446B116573AD000D70E01 /* ofxTween.cpp */; };
 		E761F4D81622CA3D00029E43 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E761F4D71622CA3D00029E43 /* Accelerate.framework */; };
+		E7BC3C43165AA5320031908F /* Billboard.frag in Sources */ = {isa = PBXBuildFile; fileRef = E7BC3C40165AA5320031908F /* Billboard.frag */; };
+		E7BC3C44165AA5320031908F /* Billboard.vert in Sources */ = {isa = PBXBuildFile; fileRef = E7BC3C41165AA5320031908F /* Billboard.vert */; };
 		E7E077E515D3B63C0020DFD4 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */; };
 		E7E077E815D3B6510020DFD4 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7E077E715D3B6510020DFD4 /* QTKit.framework */; };
 /* End PBXBuildFile section */
@@ -254,6 +256,8 @@
 		E72446B116573AD000D70E01 /* ofxTween.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTween.cpp; sourceTree = "<group>"; };
 		E72446B216573AD000D70E01 /* ofxTween.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxTween.h; sourceTree = "<group>"; };
 		E761F4D71622CA3D00029E43 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
+		E7BC3C40165AA5320031908F /* Billboard.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Billboard.frag; sourceTree = "<group>"; };
+		E7BC3C41165AA5320031908F /* Billboard.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Billboard.vert; sourceTree = "<group>"; };
 		E7E077E415D3B63C0020DFD4 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		E7E077E715D3B6510020DFD4 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -354,6 +358,7 @@
 			children = (
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
+				E7BC3C3F165AA5320031908F /* shaders */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
 				BB4B014C10F69532006C3DED /* addons */,
@@ -657,6 +662,16 @@
 			path = Easings;
 			sourceTree = "<group>";
 		};
+		E7BC3C3F165AA5320031908F /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				E7BC3C40165AA5320031908F /* Billboard.frag */,
+				E7BC3C41165AA5320031908F /* Billboard.vert */,
+			);
+			name = shaders;
+			path = bin/data/shaders;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -799,6 +814,8 @@
 				E72446E316573AD000D70E01 /* ofxEasingQuint.cpp in Sources */,
 				E72446E416573AD000D70E01 /* ofxEasingSine.cpp in Sources */,
 				E72446E516573AD000D70E01 /* ofxTween.cpp in Sources */,
+				E7BC3C43165AA5320031908F /* Billboard.frag in Sources */,
+				E7BC3C44165AA5320031908F /* Billboard.vert in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

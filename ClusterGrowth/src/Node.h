@@ -27,7 +27,11 @@ class Node {
 	
 	ofVboMesh* mesh;
 	
+	ofFloatColor lineColor;
+	ofFloatColor nodeColor;
+	
 	int sourceId;
+	bool replicated;
 	
 	Node* parent;
 	ofVec3f direction;

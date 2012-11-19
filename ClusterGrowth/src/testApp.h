@@ -27,6 +27,7 @@ class testApp : public ofBaseApp {
 	bool rendering;
 	int frameNum;
 	ofxPanel gui;
+	ofxIntSlider seed;
 	ofxIntSlider heroNodes;
 	ofxIntSlider numIterations;
 	ofxFloatSlider heroRadius;
@@ -40,10 +41,16 @@ class testApp : public ofBaseApp {
 	ofxFloatSlider minRepelRadius;
 	ofxFloatSlider minFuseRadius;
 	
+	ofxFloatSlider lineStartTime;
+	ofxFloatSlider lineEndTime;
+	ofxIntSlider lineFadeVerts;
+	
 	ofxFloatSlider maxAttractForce;
 	ofxFloatSlider maxRepelForce;
 	
 	ofxFloatSlider maxTraverseDistance;
+	ofxFloatSlider traverseNodeWeight;
+	ofxFloatSlider traverseStepSize;
 	
 	ofxIntSlider numSurvivingBranches;
 	ofxIntSlider numPointsAtReplicate;
@@ -60,10 +67,22 @@ class testApp : public ofBaseApp {
 	vector<Node*> nodes;
 	vector<ofVec3f> fusePoints;
 	ofVboMesh geometry;
+	//fuzzy points
 	ofVboMesh points;
+	//for drawing the line
 	ofVboMesh traversal;
+	
+	//for drawing the node graphics
+	vector<Node*> traversedNodes;
+	map<ofIndexType,ofIndexType> traversalIndexToNodeIndex;
+	ofVboMesh traversedNodePoints;
+	
 	void traverse();
 	void generate();
 	
+	ofShader billboard;
 	string renderFolder;
+	ofImage nodeSprite;
+	
+	void loadShader();
 };

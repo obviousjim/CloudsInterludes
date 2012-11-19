@@ -107,7 +107,7 @@ void testApp::setup(){
 	renderTarget.allocate(1920, 1080, GL_RGB, 4);
     simplify = 1;
 	
-	scenePaths["jer"]   = "/Volumes/IMPOSTER/EyeoMediaBin/Jer03"; //6297
+	scenePaths["jer"]   = "/Volumes/IMPOSTER/EyeoMediaBin/Jer03"; //6297 - 6751
 	scenePaths["bruce"] = "/Volumes/IMPOSTER/BruceSterlingAustin/TAKE_07_08_14_15_35";
 	scenePaths["paola"] = "/Volumes/IMPOSTER/EyeoMediaBin/Paola03";
 	scenePaths["sofy"]  = "/Volumes/IMPOSTER/ITPClouds/TAKE_07_12_21_07_00"; //9190
@@ -119,10 +119,15 @@ void testApp::setup(){
 	gui.add(drawParticles.setup("draw particles",ofxParameter<bool>()));
 	gui.add(supressPlay.setup("supress play",ofxParameter<bool>()));
 
-	gui.add(numAmbientParticles.setup("num ambient", ofxParameter<int>(), 500, 100000));
+	gui.add(numAmbientParticles.setup("num ambient", ofxParameter<int>(), 500, 200000));
 	gui.add(particleBoxWidth.setup("ap box width", ofxParameter<int>(), 500, 3000));
 	gui.add(particleBoxHeight.setup("ap box height", ofxParameter<int>(), 500, 3000));
 	gui.add(particleBoxDepth.setup("ap box depth", ofxParameter<int>(), 3000, 10000));
+
+	
+	gui.add(particleMaxDistance.setup("max particle distance", ofxParameter<float>(), 0, 1000));
+	gui.add(particeMaxSize.setup("max particle size", ofxParameter<float>(), .5, 9));
+	gui.add(particleFade.setup("particle alpha", ofxParameter<float>(), 0, 1.0));
 
     gui.loadFromFile("defaultSettings.xml");
     
@@ -138,12 +143,6 @@ void testApp::setup(){
 	
 	if(numAmbientParticles < 0 ) numAmbientParticles = 50000;
 	generateAmbientParticles();
-	//generateClusters();
-	
-	
-//	for(int i = 0; i < 10000; i++){
-//		randomUnits.addVertex(ofRandomPointOnUnitSphere()*300);
-//	}
 	
 	cout << "generated " << clusters.getVertices().size() << " cluster points " << endl;
 	
@@ -401,9 +400,15 @@ void testApp::draw(){
 	}
 
 	ambientShader.begin();
+//	uniform float maxSize;
+//	uniform float maxDisance;
+
+	ambientShader.setUniform1f("maxDisance", particleMaxDistance) ;
+	ambientShader.setUniform1f("maxSize", particeMaxSize) ;
+
 	ofPushStyle();
 	glPointSize(3.0);
-	ofSetColor(255);
+	ofSetColor(particleFade*255);
 	ambientParticles.drawVertices();
 
 	ofPopStyle();
@@ -544,6 +549,7 @@ void testApp::keyPressed(int key){
 	
 	if(key == 'R'){
 		rendering = !rendering;
+		
 		timeline.stop();
 		player.getVideoPlayer()->stop();
 		timeline.setPercentComplete(timeline.getInOutRange().min);

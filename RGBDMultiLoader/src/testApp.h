@@ -63,7 +63,9 @@ class testApp : public ofBaseApp{
 	ofxIntSlider particleBoxWidth;
 	ofxIntSlider particleBoxHeight;
 	ofxIntSlider particleBoxDepth;
-
+	ofxFloatSlider particleMaxDistance;
+	ofxFloatSlider particeMaxSize;
+	ofxFloatSlider particleFade;
 	//START NODE STRUCTURES
 	
 	ParticleRenderer particleRenderer;
@@ -86,7 +88,7 @@ class testApp : public ofBaseApp{
 	
 	ofShader cloudShader;
 	ofShader ambientShader;
-	
+
 	ofImage saveImage;
 	bool rendering;
 	int currentFrameNumber;

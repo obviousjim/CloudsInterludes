@@ -5,7 +5,10 @@
 <draw_pointcloud>0</draw_pointcloud>
 <draw_particles>1</draw_particles>
 <supress_play>1</supress_play>
-<num_ambient>60697</num_ambient>
-<ap_box_width>1937</ap_box_width>
-<ap_box_height>1225</ap_box_height>
-<ap_box_depth>5520</ap_box_depth>
+<num_ambient>17457</num_ambient>
+<ap_box_width>850</ap_box_width>
+<ap_box_height>950</ap_box_height>
+<ap_box_depth>3105</ap_box_depth>
+<max_particle_distance>1000.000000000</max_particle_distance>
+<max_particle_size>4.622499943</max_particle_size>
+<particle_alpha>0.365000010</particle_alpha>

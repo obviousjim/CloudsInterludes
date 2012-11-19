@@ -19,6 +19,7 @@ void testApp::setup(){
 	cam.loadCameraPosition();
 	gui.setup("gui");
 	
+	gui.add(seed.setup("seed", ofxParameter<int>(), 0, 100));
 	gui.add(heroNodes.setup("hero nodes", ofxParameter<int>(), 5, 20));
 	gui.add(heroRadius.setup("spawn radius", ofxParameter<float>(), 5, 1000));
 	gui.add(heroRadiusVariance.setup("radius var", ofxParameter<float>(), 5, 1000));
@@ -40,9 +41,14 @@ void testApp::setup(){
 	gui.add(maxAttractForce.setup("max attract force", ofxParameter<float>(), 0, 1.0));
 	gui.add(maxRepelForce.setup("max repel force", ofxParameter<float>(), 0, 1.0));
 
-	gui.add(maxTraverseDistance.setup("max traverse dist", ofxParameter<float>(), 100, 1000));
+//	gui.add(maxTraverseDistance.setup("max traverse dist", ofxParameter<float>(), 100, 1000));
 	gui.add(maxTraverseAngle.setup("max traverse angle", ofxParameter<float>(), 0, 180));
-			
+//	gui.add(traverseStepSize.setup("traverse step", ofxParameter<float>(), .5, 5));
+	
+	gui.add(lineStartTime.setup("line start", ofxParameter<float>(), 0, 1.0));
+	gui.add(lineEndTime.setup("line end", ofxParameter<float>(), 0, 1.0));
+	gui.add(lineFadeVerts.setup("line fade verts", ofxParameter<int>(), 1, 10));
+
 	gui.loadFromFile("settings.xml");
 	
 	timeline.setup();
@@ -51,9 +57,29 @@ void testApp::setup(){
 	timeline.setFrameBased(true);
 	timeline.setDurationInFrames(25*24);
 	timeline.addTrack("camera", &camTrack);
+	timeline.addColors("line color");
+	timeline.addColors("node color");
 	camTrack.setCamera(cam);
 
 	renderTarget.allocate(1920, 1080, GL_RGB, 4);
+
+	traversedNodePoints.setUsage( GL_DYNAMIC_DRAW );
+	traversedNodePoints.setMode(OF_PRIMITIVE_POINTS);
+
+	loadShader();
+}
+
+
+//--------------------------------------------------------------
+void testApp::loadShader(){
+	billboard.load("shaders/Billboard");
+	billboard.begin();
+	billboard.setUniform1i("tex", 0);
+	billboard.end();
+	
+	ofDisableArbTex();
+	nodeSprite.loadImage("shaders/dot.png");
+	ofEnableArbTex();
 }
 
 //--------------------------------------------------------------
@@ -69,16 +95,26 @@ void testApp::update(){
 	fboRect.x = 200;
 	cam.applyRotation = cam.applyTranslation = fboRect.inside(mouseX, mouseY) && !camTrack.lockCameraToTrack;
 	
-	int vertsToHighlight = traversal.getVertices().size()*timeline.getPercentComplete();
+//	gui.add(lineStartTime.setup("line start", ofxParameter<float>(), 0, 1.0));
+//	gui.add(lineEndTime.setup("line end", ofxParameter<float>(), 0, 1.0));
+//	gui.add(lineFadeVerts.setup("line fade verts", ofxParameter<int>(), 1, 10));
+
+	int vertsToHighlight = ofMap(timeline.getPercentComplete(), lineStartTime, lineEndTime, 0, traversal.getVertices().size());
 	for(int i = 0; i < vertsToHighlight; i++){;
-		float fade = ofMap(i, vertsToHighlight*.9, vertsToHighlight, 1.0, 0, true);
-		traversal.setColor(i, ofFloatColor(fade, 0,0, 1.0));
+//		float fade = ofMap(i, vertsToHighlight*.9, vertsToHighlight, 1.0, 0, true);
+		if(traversalIndexToNodeIndex.find(i) != traversalIndexToNodeIndex.end()){
+			//traversedNodePoints.getNormals()[ traversalIndexToNodeIndex[i ] ].x = 1.0;
+//			cout << "setting color of  line point " << i << " to node index " << endl;
+			traversedNodePoints.getNormals()[ traversalIndexToNodeIndex[i ] ].x = 1.0;
+			traversedNodePoints.getColors()[ traversalIndexToNodeIndex[i ] ].r = 0.0;
+		}
+		ofFloatColor lineColor = timeline.getColor("line color");
+		traversal.setColor(i, lineColor);
 	}
 	
 	for(int i = vertsToHighlight; i < traversal.getVertices().size(); i++){
 		traversal.setColor(i, ofFloatColor(0));
 	}
-
 }
 
 //--------------------------------------------------------------
@@ -97,15 +133,24 @@ void testApp::draw(){
 	geometry.setMode(OF_PRIMITIVE_LINE_STRIP);
 	geometry.draw();
 	
-
 	glPointSize(pointSize);
 	ofSetColor(255*.15);
 	points.drawVertices();
-	ofSetColor(255, 0, 0);
+//	ofSetColor(255, 0, 0);
 	traversal.setMode(OF_PRIMITIVE_LINE_STRIP);
 	traversal.draw();
-	ofPopStyle();
 
+	billboard.begin();
+	ofEnablePointSprites();
+	ofDisableArbTex();
+	nodeSprite.getTextureReference().bind();
+	traversedNodePoints.drawVertices();
+	nodeSprite.getTextureReference().unbind();
+	billboard.end();
+	ofDisablePointSprites();
+	ofEnableArbTex();
+	ofPopStyle();
+	
 	cam.end();
 	renderTarget.end();
 	
@@ -135,6 +180,7 @@ void testApp::generate(){
 	geometry.clear();
 	points.clear();
 	fusePoints.clear();
+	srand(seed);
 	
 	for(int i = 0; i < heroNodes; i++){
 		Node* n = new Node();
@@ -147,7 +193,8 @@ void testApp::generate(){
 		n->stepSize = stepSize;
 		n->numSurvivingBranches = numSurvivingBranches;
 		n->minFuseRadius = minFuseRadius;
-		
+		n->lineColor = timeline.getColor("line color");
+		n->nodeColor = timeline.getColor("node color");
 		n->replicatePointDistance = replicatePointDistance;
 		n->numPointsAtReplicate = numPointsAtReplicate;
 		
@@ -210,43 +257,90 @@ void testApp::traverse(){
 	ofVec3f position = n1->position;
 	ofVec3f direction = (n2->position - n1->position).normalized();
 	cout << "traversing " << position << " to " << n2->position << endl;
-	while(position.distance(n2->position) > 50 && numTries < 10000){
-		ofVec3f dirToTarget = (n2->position - n1->position);
-		Node* nextNode = NULL;
-		traversal.addColor(ofFloatColor(0));
-		traversal.addVertex(position);
+	
+	//select an array of nodes along the path
+	traversedNodes.clear();
+	traversalIndexToNodeIndex.clear();
+	traversedNodePoints.clear();
+	
+	Node* cur = n1;
+	while(cur != n2){
+		traversalIndexToNodeIndex[traversal.getVertices().size()] = traversedNodes.size();
+
+		traversedNodes.push_back(cur);
+		traversedNodePoints.addVertex(cur->position);
+		traversedNodePoints.addNormal(ofVec3f(0,0,0));
+		traversedNodePoints.addColor(ofFloatColor(1));
 		
-		ofVec3f force(0,0,0);
+		ofVec3f dirToTarget = (n2->position - cur->position);
+		float closestDistance = dirToTarget.lengthSquared();
+		Node* closestNode = n2;
 		for(int i = 0; i < nodes.size(); i++){
-			ofVec3f dirToNode = (nodes[i]->position - position);
-			float length = dirToNode.length();
-			dirToNode.normalize();
-			if(length < 5){
-				cout << "node is too close " << length << " max distance " << maxTraverseDistance << endl;
+
+			if(!nodes[i]->replicated){
 				continue;
 			}
 			
-			float positionScore = ofMap(length, 0, maxTraverseDistance, 1.0, 0.0, true);
-			float angleScore = 1. - (dirToTarget.angle(dirToNode) / maxTraverseAngle);
-			force += dirToNode * positionScore * angleScore;
+			bool containsNode = false;
+			for(int j = 0; j < traversedNodes.size(); j++){
+				if(traversedNodes[j] == nodes[i]){
+					containsNode = true;
+					break;
+				}
+			}
+			
+			if(containsNode){
+//				cout << "	already contains node at index continuing " << i << endl;
+				continue;
+			}
+			
+			dirToTarget = (n2->position - position);
+			ofVec3f dirToNode = (nodes[i]->position - position);
+			float angleTo = dirToTarget.angle(dirToNode);
+			if(angleTo > maxTraverseAngle){
+				continue;
+			}
+			
+			float lengthSquared = dirToNode.lengthSquared();
+			if(lengthSquared < closestDistance){
+//				cout << "	current closest node is " << sqrt(lengthSquared) << " at index " << i << endl;
+				closestNode = nodes[i];
+				closestDistance = lengthSquared;
+			}
 		}
 		
-		if(force.lengthSquared() == 0){
-			cout << "no force!!" << endl;
-			break;
+//		cout << " distance " << sqrt(closestDistance) << " / " << position.distance(n2->position) << endl;
+		//move towards this node smoothly
+
+		int numSteps = 0;
+		float currentDistance = dirToTarget.length();
+		while(currentDistance > 2){
+			float dampen = ofMap(currentDistance, 20, 2, .05, 1, true);
+			direction += ( (dirToTarget / currentDistance) - direction) * dampen;
+			direction.normalize();
+//			direction = dirToTarget.normalized();
+			position  += direction * MIN(1, direction.length());
+			traversal.addColor(ofFloatColor(0));
+			traversal.addVertex(position);
+			dirToTarget = (closestNode->position - position);
+			currentDistance = dirToTarget.length();
+			if(numSteps++ > 10000){
+				cout << "failed with 10000 steps";
+				break;
+			}
 		}
-
-		cout << "Moved from " << position;
-		direction += force;
-		direction.normalize();
-		position += direction * stepSize;
-		cout << " to " << position << " with force " << force << endl;
 		
-
-		numTries++;
+//		cout << "added " << numSteps << " steps " << endl;
+		cur = closestNode;
+		
 	}
+	
+
+	traversalIndexToNodeIndex[traversedNodes.size()] = traversal.getVertices().size();
+	traversedNodes.push_back(n2);
 	traversal.addColor(ofFloatColor(0));
 	traversal.addVertex(n2->position);
+	
 	cout << "traversing took " << traversal.getVertices().size() << " steps " << endl;
 }
 
@@ -297,6 +391,10 @@ void testApp::keyPressed(int key){
 			timeline.setCurrentFrame(timeline.getInFrame());
 			timeline.play();
 		}
+	}
+	
+	if(key == 'S'){
+		loadShader();
 	}
 }
 

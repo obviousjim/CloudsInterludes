@@ -15,6 +15,7 @@ bool nodesort(Node* a, Node* b){
 Node::Node(){
 	terminated = false;
 	leaf = true;
+	replicated = false;
 	generation = 0;
 	parent = NULL;
 	startIndex = 0;
@@ -24,6 +25,7 @@ Node::Node(){
 
 void Node::replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints){
 	leaf = false;
+	replicated = true;
 	vector<Node*> newNodes;
 
 
@@ -38,6 +40,9 @@ void Node::replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints){
 		n->mesh = mesh;
 		n->stepSize = stepSize;
 		n->generation = generation+1;
+		
+		n->lineColor = lineColor;
+		n->nodeColor = nodeColor;
 		
 		n->position = position;
 		n->direction = ofRandomPointOnUnitSphere();
@@ -55,8 +60,6 @@ void Node::replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints){
 		n->numPointsAtReplicate = numPointsAtReplicate;
 		n->replicatePointDistance = replicatePointDistance;
 		
-
-
 		n->actualDistance = minDistance * ofRandom(distanceRange);
 		float distanceTraveled = 0;
 		
@@ -136,7 +139,7 @@ void Node::replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints){
 	}
 	
 	for(int i = 0; i < numPointsAtReplicate; i++){
-		fusePoints.push_back(position + ofRandomPointOnUnitSphere() * ofRandom(replicatePointDistance));
+		fusePoints.push_back(position + ofRandomPointOnUnitSphere() * powf(ofRandomuf(),2)*replicatePointDistance);
 	}
 	
 	//cut off shortest paths
@@ -160,8 +163,9 @@ void Node::fade(int maxEnergy){
 	int energyIndex = startEnergy;
 	for(int i = startIndex; i < endIndex; i++){
 		if(mesh->getColor(i).a > 0){
-			float alpha = ofMap(energyIndex++, 0, maxEnergy, .4, 0);
-			mesh->setColor(i, ofFloatColor(alpha*.1,alpha*.3, alpha));
+			float alpha = ofMap(energyIndex++, 0, maxEnergy, .8, 0);
+			//mesh->setColor(i, ofFloatColor(alpha*125./255,alpha*142/255., alpha*193/255.));
+			mesh->setColor(i, nodeColor*alpha);
 		}
 	}
 	
@@ -181,7 +185,8 @@ void Node::terminate(){
 		leaf = false;
 		for(int i = startIndex; i < endIndex; i++){
 			if(mesh->getColor(i).a > 0){
-				mesh->setColor(i, ofFloatColor(.7,.4,.2	,1.0));
+//				mesh->setColor(i, ofFloatColor(.7,.4,.2	,1.0));
+				mesh->setColor(i, lineColor);
 				//mesh->setColor(i, ofFloatColor(.3,.5,.3));
 			}
 		}

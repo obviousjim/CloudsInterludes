@@ -1,50 +1,50 @@
 <positions>
     <element name="explode force">
         <x>0.000000000</x>
-        <y>1029.000000000</y>
-        <width>1920.000000000</width>
+        <y>296.000000000</y>
+        <width>1024.000000000</width>
         <height>40.000000000</height>
     </element>
     <element name="explode var">
         <x>0.000000000</x>
-        <y>1075.000000000</y>
-        <width>1920.000000000</width>
+        <y>342.000000000</y>
+        <width>1024.000000000</width>
         <height>59.000000000</height>
     </element>
     <element name="gravity amp">
         <x>0.000000000</x>
-        <y>937.000000000</y>
-        <width>1920.000000000</width>
+        <y>204.000000000</y>
+        <width>1024.000000000</width>
         <height>40.000000000</height>
     </element>
     <element name="perlin amp">
         <x>0.000000000</x>
-        <y>803.000000000</y>
-        <width>1920.000000000</width>
+        <y>70.000000000</y>
+        <width>1024.000000000</width>
         <height>36.000000000</height>
     </element>
     <element name="perlin density">
         <x>0.000000000</x>
-        <y>891.000000000</y>
-        <width>1920.000000000</width>
+        <y>158.000000000</y>
+        <width>1024.000000000</width>
         <height>40.000000000</height>
     </element>
     <element name="perlin speed">
         <x>0.000000000</x>
-        <y>845.000000000</y>
-        <width>1920.000000000</width>
+        <y>112.000000000</y>
+        <width>1024.000000000</width>
         <height>40.000000000</height>
     </element>
     <element name="spin force">
         <x>0.000000000</x>
-        <y>983.000000000</y>
-        <width>1920.000000000</width>
+        <y>250.000000000</y>
+        <width>1024.000000000</width>
         <height>40.000000000</height>
     </element>
     <element name="z wind">
         <x>0.000000000</x>
-        <y>1140.000000000</y>
-        <width>1920.000000000</width>
+        <y>407.000000000</y>
+        <width>1024.000000000</width>
         <height>40.000000000</height>
     </element>
 </positions>

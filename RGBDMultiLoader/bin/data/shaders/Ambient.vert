@@ -1,8 +1,6 @@
 
-uniform float focalDistance;
-uniform float focalRange;
 uniform float maxSize;
-uniform float minSize;
+uniform float maxDisance;
 
 const float PI = 3.14159265;
 //const float maxSize = 32.;
@@ -22,15 +20,11 @@ void main() {
 	//gl_TexCoord[0] = gl_MultiTexCoord0;
 
 	gl_Position = ftransform();
-	if(gl_Position.z < 0.){
-		gl_Position.z = (2000. + gl_Position.z);
-	}
-
 	gl_TexCoord[0] = gl_MultiTexCoord0;
-	gl_FrontColor = gl_Color * vec4(.5);
-	float fade = max(2000. - gl_Position.z, 0.) / 2000.;
+	gl_FrontColor = gl_Color;
+	float fade = max(maxDisance - gl_Position.z, 0.) / maxDisance;
 	gl_FrontColor.a = fade;
-	gl_PointSize = fade * 4.;
+	gl_PointSize = fade * maxSize;
 	
     //float scale = min(1.0, abs(gl_Position.z - focalDistance) / focalRange);
     //gl_PointSize = scale * (maxSize - minSize) + minSize;
