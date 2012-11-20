@@ -4,9 +4,10 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 	
-	ofSetFrameRate(30);
+	ofSetFrameRate(24);
 	ofBackground(0);
 	ofSetVerticalSync(true);
+	ofSetEscapeQuitsApp(false);
 	
 	glEnable(GL_LINE_SMOOTH);
 	glEnable(GL_POINT_SMOOTH);
@@ -31,7 +32,7 @@ void testApp::setup(){
 	gui.add(stepSize.setup("step size", ofxParameter<float>(), 1, 300));
 	gui.add(numPointsAtReplicate.setup("points at replicate",ofxParameter<int>(), 10, 1000));
 	gui.add(replicatePointDistance.setup("replicate distance",ofxParameter<float>(), 5, 500));
-	gui.add(pointSize.setup("replicate point size",ofxParameter<float>(), 1, 5));
+	gui.add(replicatePointSize.setup("replicate point size",ofxParameter<float>(), 1, 50));
 	gui.add(lineThickness.setup("line thickness", ofxParameter<float>(), 2, 10));
 
 	gui.add(minAttractRadius.setup("min attract radius", ofxParameter<float>(), 10, 1000));
@@ -41,10 +42,9 @@ void testApp::setup(){
 	gui.add(maxAttractForce.setup("max attract force", ofxParameter<float>(), 0, 1.0));
 	gui.add(maxRepelForce.setup("max repel force", ofxParameter<float>(), 0, 1.0));
 
-//	gui.add(maxTraverseDistance.setup("max traverse dist", ofxParameter<float>(), 100, 1000));
 	gui.add(maxTraverseAngle.setup("max traverse angle", ofxParameter<float>(), 0, 180));
-//	gui.add(traverseStepSize.setup("traverse step", ofxParameter<float>(), .5, 5));
-	
+	gui.add(nodePopLength.setup("node pop length", ofxParameter<int>(), 50, 2000));
+
 	gui.add(lineStartTime.setup("line start", ofxParameter<float>(), 0, 1.0));
 	gui.add(lineEndTime.setup("line end", ofxParameter<float>(), 0, 1.0));
 	gui.add(lineFadeVerts.setup("line fade verts", ofxParameter<int>(), 1, 10));
@@ -57,8 +57,16 @@ void testApp::setup(){
 	timeline.setFrameBased(true);
 	timeline.setDurationInFrames(25*24);
 	timeline.addTrack("camera", &camTrack);
-	timeline.addColors("line color");
-	timeline.addColors("node color");
+	timeline.addCurves("node bounce");
+	timeline.addCurves("node size", ofRange(1, 100), 20);
+	timeline.addCurves("line focal dist", ofRange(0, sqrt(3000)),  100);
+	timeline.addCurves("line focal range", ofRange(0, sqrt(3000)),  100);
+	
+	lineColor = timeline.addColors("line color");
+	timeline.addColorsWithPalette("node color", "nerve_palette.png");
+	//timeline.addColors("node color");
+	timeline.setMinimalHeaders(true);
+
 	camTrack.setCamera(cam);
 
 	renderTarget.allocate(1920, 1080, GL_RGB, 4);
@@ -66,7 +74,9 @@ void testApp::setup(){
 	traversedNodePoints.setUsage( GL_DYNAMIC_DRAW );
 	traversedNodePoints.setMode(OF_PRIMITIVE_POINTS);
 
+	nodeCloudPoints.enableNormals();
 	loadShader();
+	
 }
 
 
@@ -79,7 +89,11 @@ void testApp::loadShader(){
 	
 	ofDisableArbTex();
 	nodeSprite.loadImage("shaders/dot.png");
+	nodeRingSprite.loadImage("shaders/ring.png");
 	ofEnableArbTex();
+	
+	lineAttenuate.load("shaders/attenuatelines");
+	
 }
 
 //--------------------------------------------------------------
@@ -99,21 +113,27 @@ void testApp::update(){
 //	gui.add(lineEndTime.setup("line end", ofxParameter<float>(), 0, 1.0));
 //	gui.add(lineFadeVerts.setup("line fade verts", ofxParameter<int>(), 1, 10));
 
-	int vertsToHighlight = ofMap(timeline.getPercentComplete(), lineStartTime, lineEndTime, 0, traversal.getVertices().size());
+	int vertsToHighlight = ofMap(timeline.getPercentComplete(), lineStartTime, lineEndTime, 0, traversal.getVertices().size(), true);
+	float nodeSize = timeline.getValue("node size");
 	for(int i = 0; i < vertsToHighlight; i++){;
 //		float fade = ofMap(i, vertsToHighlight*.9, vertsToHighlight, 1.0, 0, true);
+		float alpha = ofMap(i, vertsToHighlight, vertsToHighlight-nodePopLength, 0.0, 1.0, true);
+		ofFloatColor currentColor = lineColor->getColorAtPosition(alpha);
+		traversal.setColor(i, currentColor);
 		if(traversalIndexToNodeIndex.find(i) != traversalIndexToNodeIndex.end()){
 			//traversedNodePoints.getNormals()[ traversalIndexToNodeIndex[i ] ].x = 1.0;
 //			cout << "setting color of  line point " << i << " to node index " << endl;
-			traversedNodePoints.getNormals()[ traversalIndexToNodeIndex[i ] ].x = 1.0;
-			traversedNodePoints.getColors()[ traversalIndexToNodeIndex[i ] ].r = 0.0;
+			traversedNodePoints.getNormals()[ traversalIndexToNodeIndex[i ] ].x = nodeSize*timeline.getValueAtPercent("node bounce", alpha);
+			traversedNodePoints.getColors()[ traversalIndexToNodeIndex[i ] ] = currentColor;
 		}
-		ofFloatColor lineColor = timeline.getColor("line color");
-		traversal.setColor(i, lineColor);
 	}
+	
 	
 	for(int i = vertsToHighlight; i < traversal.getVertices().size(); i++){
 		traversal.setColor(i, ofFloatColor(0));
+		if(traversalIndexToNodeIndex.find(i) != traversalIndexToNodeIndex.end()){
+			traversedNodePoints.getNormals()[ traversalIndexToNodeIndex[i ] ].x = 0.0;
+		}
 	}
 }
 
@@ -130,25 +150,47 @@ void testApp::draw(){
 	ofSetColor(255);
 	
 	ofSetLineWidth(	lineThickness );
+	lineAttenuate.begin();
+	lineAttenuate.setUniform1f("focalPlane", powf(timeline.getValue("line focal dist"),2));
+	lineAttenuate.setUniform1f("focalRange", powf(timeline.getValue("line focal range"),2));
+	
 	geometry.setMode(OF_PRIMITIVE_LINE_STRIP);
 	geometry.draw();
 	
-	glPointSize(pointSize);
-	ofSetColor(255*.15);
-	points.drawVertices();
-//	ofSetColor(255, 0, 0);
+	lineAttenuate.end();
+	
 	traversal.setMode(OF_PRIMITIVE_LINE_STRIP);
 	traversal.draw();
 
+//	nodeRingSprite.getTextureReference().bind();
+	ofSetColor(255*.5);
+	glPointSize(replicatePointSize);
+	nodeCloudPoints.drawVertices();
+//	nodeRingSprite.getTextureReference().unbind();
+
+	
+	//POINT SPRITES
 	billboard.begin();
 	ofEnablePointSprites();
 	ofDisableArbTex();
+	
+	//FUZZIES
+//	glPointSize(pointSize);
+//	ofSetColor(255*.15);
+//	nodeRingSprite.getTextureReference().bind();
+//	nodeCloudPoints.drawVertices();
+//	nodeRingSprite.getTextureReference().unbind();
+	
+	
+	//NODES
 	nodeSprite.getTextureReference().bind();
 	traversedNodePoints.drawVertices();
 	nodeSprite.getTextureReference().unbind();
+	
 	billboard.end();
 	ofDisablePointSprites();
 	ofEnableArbTex();
+	
 	ofPopStyle();
 	
 	cam.end();
@@ -178,7 +220,7 @@ void testApp::generate(){
 	
 	nodes.clear();
 	geometry.clear();
-	points.clear();
+	nodeCloudPoints.clear();
 	fusePoints.clear();
 	srand(seed);
 	
@@ -193,9 +235,11 @@ void testApp::generate(){
 		n->stepSize = stepSize;
 		n->numSurvivingBranches = numSurvivingBranches;
 		n->minFuseRadius = minFuseRadius;
+		n->nodeColorTrack = (ofxTLColorTrack*)timeline.getTrack("node color");
 		n->lineColor = timeline.getColor("line color");
 		n->nodeColor = timeline.getColor("node color");
 		n->replicatePointDistance = replicatePointDistance;
+		n->replicatePointSize = replicatePointSize;
 		n->numPointsAtReplicate = numPointsAtReplicate;
 		
 		n->minAttractRadius = minAttractRadius;
@@ -217,7 +261,12 @@ void testApp::generate(){
 		int numNodes = nodes.size();
 		for(int n = 0; n < numNodes; n++){
 			if(nodes[n]->leaf){
-				nodes[n]->replicate( nodes, points.getVertices() );
+				nodes[n]->targeted = false;
+			}
+		}
+		for(int n = 0; n < numNodes; n++){
+			if(nodes[n]->leaf){
+				nodes[n]->replicate( nodes, nodeCloudPoints.getVertices(), nodeCloudPoints.getNormals());
 			}
 		}
 	}
@@ -358,7 +407,6 @@ void testApp::keyPressed(int key){
 	
 	if(key == 'g'){
 		generate();
-		gui.saveToFile("settings.xml");
 	}
 	
 	if(key == 't'){
@@ -400,7 +448,7 @@ void testApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void testApp::keyReleased(int key){
-
+		gui.saveToFile("settings.xml");
 }
 
 //--------------------------------------------------------------

@@ -51,27 +51,32 @@ class testApp : public ofBaseApp {
 	ofxFloatSlider maxTraverseDistance;
 	ofxFloatSlider traverseNodeWeight;
 	ofxFloatSlider traverseStepSize;
-	
+
 	ofxIntSlider numSurvivingBranches;
 	ofxIntSlider numPointsAtReplicate;
+	
 	ofxFloatSlider replicatePointDistance;
-	ofxFloatSlider pointSize;
+	ofxFloatSlider replicatePointSize;
 	ofxFloatSlider maxTraverseAngle;
+
+	ofxIntSlider nodePopLength;
 	
 	ofxTLCameraTrack camTrack;
 	ofxGameCamera cam;
 	ofFbo renderTarget;
 	ofxTimeline timeline;
 	ofRectangle fboRect;
+	ofxTLColorTrack* lineColor;
 	
 	vector<Node*> nodes;
 	vector<ofVec3f> fusePoints;
 	ofVboMesh geometry;
 	//fuzzy points
-	ofVboMesh points;
+	ofVboMesh nodeCloudPoints;
 	//for drawing the line
 	ofVboMesh traversal;
 	
+	ofxTLCurves* nodeBounce;
 	//for drawing the node graphics
 	vector<Node*> traversedNodes;
 	map<ofIndexType,ofIndexType> traversalIndexToNodeIndex;
@@ -81,8 +86,9 @@ class testApp : public ofBaseApp {
 	void generate();
 	
 	ofShader billboard;
+	ofShader lineAttenuate;
 	string renderFolder;
 	ofImage nodeSprite;
-	
+	ofImage nodeRingSprite;
 	void loadShader();
 };

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxTLColorTrack.h"
 
 static ofVec3f ofRandomPointOnUnitSphere(){
 	float phi = 2*PI*ofRandomuf();
@@ -14,9 +15,9 @@ class Node {
 	
 	Node();
 	
-	void replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints);
+	void replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints, vector<ofVec3f>& fuseDistances);
 	void terminate();
-	void fade(int maxEnergy);
+	void fade(int maxEnergy, bool leaf);
 	void finalize();
 	
 	int startEnergy;
@@ -24,12 +25,12 @@ class Node {
 	
 	ofIndexType startIndex;
 	ofIndexType endIndex;
-	
+	ofxTLColorTrack* nodeColorTrack;
 	ofVboMesh* mesh;
 	
 	ofFloatColor lineColor;
 	ofFloatColor nodeColor;
-	
+	bool targeted;
 	int sourceId;
 	bool replicated;
 	
@@ -40,12 +41,13 @@ class Node {
 	bool leaf;
 	
 	float actualDistance;
+	float replicatePointSize;
 	
 	int numPointsAtReplicate;
 	float replicatePointDistance;
 
 	int numReplications;
-	float  minDistance;
+	float minDistance;
 	float distanceRange;
 	float stepSize;
 	int generation;
