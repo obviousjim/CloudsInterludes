@@ -37,6 +37,7 @@ class testApp : public ofBaseApp {
 	ofxFloatSlider distanceRange;
 	ofxFloatSlider stepSize;
 	ofxFloatSlider lineThickness;
+	ofxFloatSlider lineAlpha;
 	ofxFloatSlider minAttractRadius;
 	ofxFloatSlider minRepelRadius;
 	ofxFloatSlider minFuseRadius;
@@ -44,6 +45,8 @@ class testApp : public ofBaseApp {
 	ofxFloatSlider lineStartTime;
 	ofxFloatSlider lineEndTime;
 	ofxIntSlider lineFadeVerts;
+	ofxFloatSlider lineBlurAmount;
+	ofxFloatSlider lineBlurFade;
 	
 	ofxFloatSlider maxAttractForce;
 	ofxFloatSlider maxRepelForce;
@@ -64,6 +67,8 @@ class testApp : public ofBaseApp {
 	ofxTLCameraTrack camTrack;
 	ofxGameCamera cam;
 	ofFbo renderTarget;
+	ofFbo lineBlurTarget;
+	
 	ofxTimeline timeline;
 	ofRectangle fboRect;
 	ofxTLColorTrack* lineColor;
@@ -87,8 +92,9 @@ class testApp : public ofBaseApp {
 	
 	ofShader billboard;
 	ofShader lineAttenuate;
+	ofShader gaussianBlur;
 	string renderFolder;
 	ofImage nodeSprite;
-	ofImage nodeRingSprite;
+	ofImage nodeSpriteBasic;
 	void loadShader();
 };
