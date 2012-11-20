@@ -33,7 +33,7 @@ class Node {
 	bool targeted;
 	int sourceId;
 	bool replicated;
-	
+	int numIterations;
 	Node* parent;
 	ofVec3f direction;
 	ofVec3f position;

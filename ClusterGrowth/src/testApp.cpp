@@ -5,7 +5,7 @@
 void testApp::setup(){
 	
 	ofSetFrameRate(24);
-	ofBackground(0);
+	ofBackground(255*.1);
 	ofSetVerticalSync(true);
 	ofSetEscapeQuitsApp(false);
 	
@@ -30,11 +30,13 @@ void testApp::setup(){
 	gui.add(minDistance.setup("min branch dist", ofxParameter<float>(), 10, 1000));
 	gui.add(distanceRange.setup("branch dist rng", ofxParameter<float>(), 0, 3.0));
 	gui.add(stepSize.setup("step size", ofxParameter<float>(), 1, 300));
-	gui.add(numPointsAtReplicate.setup("points at replicate",ofxParameter<int>(), 10, 1000));
-	gui.add(replicatePointDistance.setup("replicate distance",ofxParameter<float>(), 5, 500));
+//	gui.add(numPointsAtReplicate.setup("points at replicate",ofxParameter<int>(), 10, 1000));
+//	gui.add(replicatePointDistance.setup("replicate distance",ofxParameter<float>(), 5, 500));
 	gui.add(replicatePointSize.setup("replicate point size",ofxParameter<float>(), 1, 50));
-	gui.add(lineThickness.setup("line thickness", ofxParameter<float>(), 2, 10));
 
+	gui.add(lineThickness.setup("line thickness", ofxParameter<float>(), 1, 10));
+	gui.add(lineAlpha.setup("line alpha", ofxParameter<float>(), 0, 1.0));
+	
 	gui.add(minAttractRadius.setup("min attract radius", ofxParameter<float>(), 10, 1000));
 	gui.add(minRepelRadius.setup("min repel radius", ofxParameter<float>(), 0, 1000));
 	gui.add(minFuseRadius.setup("min fuse radius", ofxParameter<float>(), 1, 100));
@@ -44,7 +46,9 @@ void testApp::setup(){
 
 	gui.add(maxTraverseAngle.setup("max traverse angle", ofxParameter<float>(), 0, 180));
 	gui.add(nodePopLength.setup("node pop length", ofxParameter<int>(), 50, 2000));
-
+	gui.add(lineBlurAmount.setup("line blur amount", ofxParameter<float>(), 0, 10));
+	gui.add(lineBlurFade.setup("line blur fade", ofxParameter<float>(), 0, 1.0));
+	
 	gui.add(lineStartTime.setup("line start", ofxParameter<float>(), 0, 1.0));
 	gui.add(lineEndTime.setup("line end", ofxParameter<float>(), 0, 1.0));
 	gui.add(lineFadeVerts.setup("line fade verts", ofxParameter<int>(), 1, 10));
@@ -70,7 +74,8 @@ void testApp::setup(){
 	camTrack.setCamera(cam);
 
 	renderTarget.allocate(1920, 1080, GL_RGB, 4);
-
+	lineBlurTarget.allocate(1920, 1080, GL_RGB, 4);
+	
 	traversedNodePoints.setUsage( GL_DYNAMIC_DRAW );
 	traversedNodePoints.setMode(OF_PRIMITIVE_POINTS);
 
@@ -78,7 +83,6 @@ void testApp::setup(){
 	loadShader();
 	
 }
-
 
 //--------------------------------------------------------------
 void testApp::loadShader(){
@@ -89,11 +93,12 @@ void testApp::loadShader(){
 	
 	ofDisableArbTex();
 	nodeSprite.loadImage("shaders/dot.png");
-	nodeRingSprite.loadImage("shaders/ring.png");
+	nodeSpriteBasic.loadImage("shaders/dot_no_ring.png");
 	ofEnableArbTex();
 	
 	lineAttenuate.load("shaders/attenuatelines");
 	
+	gaussianBlur.load("shaders/gaussianblur");
 }
 
 //--------------------------------------------------------------
@@ -113,11 +118,12 @@ void testApp::update(){
 //	gui.add(lineEndTime.setup("line end", ofxParameter<float>(), 0, 1.0));
 //	gui.add(lineFadeVerts.setup("line fade verts", ofxParameter<int>(), 1, 10));
 
-	int vertsToHighlight = ofMap(timeline.getPercentComplete(), lineStartTime, lineEndTime, 0, traversal.getVertices().size(), true);
+	int vertEndIndex = ofMap(timeline.getPercentComplete(), lineStartTime, lineEndTime, 0, traversal.getVertices().size());
+	int vertsToHighlight = ofClamp(vertEndIndex,0,traversal.getVertices().size()-1);
 	float nodeSize = timeline.getValue("node size");
 	for(int i = 0; i < vertsToHighlight; i++){;
 //		float fade = ofMap(i, vertsToHighlight*.9, vertsToHighlight, 1.0, 0, true);
-		float alpha = ofMap(i, vertsToHighlight, vertsToHighlight-nodePopLength, 0.0, 1.0, true);
+		float alpha = ofMap(i, vertEndIndex, vertEndIndex-nodePopLength, 0.0, 1.0, true);
 		ofFloatColor currentColor = lineColor->getColorAtPosition(alpha);
 		traversal.setColor(i, currentColor);
 		if(traversalIndexToNodeIndex.find(i) != traversalIndexToNodeIndex.end()){
@@ -127,7 +133,6 @@ void testApp::update(){
 			traversedNodePoints.getColors()[ traversalIndexToNodeIndex[i ] ] = currentColor;
 		}
 	}
-	
 	
 	for(int i = vertsToHighlight; i < traversal.getVertices().size(); i++){
 		traversal.setColor(i, ofFloatColor(0));
@@ -140,19 +145,34 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 	
+	ofEnableBlendMode(OF_BLENDMODE_SCREEN);
+	lineBlurTarget.begin();
+	ofClear(0,0,0,0);
+	ofPushStyle();
+	
+	cam.begin(ofRectangle(0,0,1920,1080));
+	ofSetLineWidth(	lineThickness *2);
+	ofSetColor(255);
+	traversal.setMode(OF_PRIMITIVE_LINE_STRIP);
+	traversal.draw();
+	cam.end();
+	
+	ofPopStyle();
+	lineBlurTarget.end();
+	
 	renderTarget.begin();
 	ofClear(0,0,0,0);
 	
 	cam.begin(ofRectangle(0,0,1920,1080));
 	ofPushStyle();
 
-	ofEnableBlendMode(OF_BLENDMODE_SCREEN);
 	ofSetColor(255);
 	
 	ofSetLineWidth(	lineThickness );
 	lineAttenuate.begin();
 	lineAttenuate.setUniform1f("focalPlane", powf(timeline.getValue("line focal dist"),2));
 	lineAttenuate.setUniform1f("focalRange", powf(timeline.getValue("line focal range"),2));
+	lineAttenuate.setUniform1f("lineFade", lineAlpha);
 	
 	geometry.setMode(OF_PRIMITIVE_LINE_STRIP);
 	geometry.draw();
@@ -162,25 +182,26 @@ void testApp::draw(){
 	traversal.setMode(OF_PRIMITIVE_LINE_STRIP);
 	traversal.draw();
 
-//	nodeRingSprite.getTextureReference().bind();
-	ofSetColor(255*.5);
-	glPointSize(replicatePointSize);
-	nodeCloudPoints.drawVertices();
-//	nodeRingSprite.getTextureReference().unbind();
-
-	
 	//POINT SPRITES
 	billboard.begin();
 	ofEnablePointSprites();
 	ofDisableArbTex();
+
+	nodeSpriteBasic.getTextureReference().bind();
+	ofSetColor(255*.5);
 	
+	//glPointSize(replicatePointSize);
+	billboard.setUniform1f("minSize", replicatePointSize);
+	
+	nodeCloudPoints.drawVertices();
+	nodeSpriteBasic.getTextureReference().unbind();
+
 	//FUZZIES
 //	glPointSize(pointSize);
 //	ofSetColor(255*.15);
 //	nodeRingSprite.getTextureReference().bind();
 //	nodeCloudPoints.drawVertices();
 //	nodeRingSprite.getTextureReference().unbind();
-	
 	
 	//NODES
 	nodeSprite.getTextureReference().bind();
@@ -192,11 +213,35 @@ void testApp::draw(){
 	ofEnableArbTex();
 	
 	ofPopStyle();
-	
 	cam.end();
+	
+	//line blur
+	gaussianBlur.begin();
+	
+	ofPushStyle();
+	//ofSetColor(255 * lineBlurFade);
+	ofSetColor(255*lineBlurFade);
+
+	gaussianBlur.setUniform1i("tex", 0);
+	gaussianBlur.setUniform2f("sampleOffset", lineBlurAmount, 0);
+	lineBlurTarget.getTextureReference().draw(0, 0, 1920, 1080);
+	
+	gaussianBlur.setUniform2f("sampleOffset", 0, lineBlurAmount);
+	lineBlurTarget.getTextureReference().draw(0, 0,1920, 1080);
+	
+	gaussianBlur.end();
+	
+	ofPopStyle();
+	
 	renderTarget.end();
 	
-	renderTarget.draw(fboRect.getX(), fboRect.getMaxY(), fboRect.width,-fboRect.height);
+	ofEnableAlphaBlending();
+	if(ofGetKeyPressed('=')){
+		lineBlurTarget.draw(fboRect.getX(), fboRect.getMaxY(), fboRect.width,-fboRect.height);
+	}
+	else{
+		renderTarget.draw(fboRect.getX(), fboRect.getMaxY(), fboRect.width,-fboRect.height);
+	}
 	
 	if(rendering && timeline.getIsPlaying()){
 		char fileName[1024];
@@ -226,11 +271,13 @@ void testApp::generate(){
 	
 	for(int i = 0; i < heroNodes; i++){
 		Node* n = new Node();
-		n->position = ofRandomPointOnUnitSphere() * heroRadius + ofRandom(heroRadiusVariance);
+		//n->position = ofRandomPointOnUnitSphere() * (heroRadius + ofRandom(heroRadiusVariance));
+		n->position = ofRandomPointOnUnitSphere() * (heroRadius + powf(ofRandomuf(),2)*heroRadiusVariance);
 		n->sourceId = i;
 		n->minDistance = minDistance;
 		n->distanceRange = distanceRange;
 		n->numReplications = numBranches;
+		n->numIterations = numIterations;
 		n->mesh = &geometry;
 		n->stepSize = stepSize;
 		n->numSurvivingBranches = numSurvivingBranches;
@@ -260,9 +307,7 @@ void testApp::generate(){
 		
 		int numNodes = nodes.size();
 		for(int n = 0; n < numNodes; n++){
-			if(nodes[n]->leaf){
-				nodes[n]->targeted = false;
-			}
+			nodes[n]->targeted = false;
 		}
 		for(int n = 0; n < numNodes; n++){
 			if(nodes[n]->leaf){
@@ -277,7 +322,6 @@ void testApp::generate(){
 			nodes[n]->finalize();
 		}
 	}
-	
 }
 
 //--------------------------------------------------------------
@@ -301,7 +345,6 @@ void testApp::traverse(){
 	
 	traversal.clear();
 
-	
 	int numTries = 0;
 	ofVec3f position = n1->position;
 	ofVec3f direction = (n2->position - n1->position).normalized();
