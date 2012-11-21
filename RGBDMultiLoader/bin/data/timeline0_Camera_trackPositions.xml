@@ -1,15 +1,15 @@
 <positions>
     <element name="cam">
         <x>0.000000000</x>
-        <y>834.000000000</y>
+        <y>796.000000000</y>
         <width>1920.000000000</width>
         <height>28.000000000</height>
     </element>
     <element name="notes">
         <x>0.000000000</x>
-        <y>898.000000000</y>
+        <y>860.000000000</y>
         <width>1920.000000000</width>
-        <height>22.000000000</height>
+        <height>60.000000000</height>
     </element>
     <element name="pause video">
         <x>0.000000000</x>
@@ -19,7 +19,7 @@
     </element>
     <element name="scene">
         <x>0.000000000</x>
-        <y>868.000000000</y>
+        <y>830.000000000</y>
         <width>1920.000000000</width>
         <height>24.000000000</height>
     </element>

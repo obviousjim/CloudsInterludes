@@ -85,6 +85,7 @@ class testApp : public ofBaseApp{
     bool loadScene(string takeDirectory);
     ofFbo renderTarget;
 	ofRectangle fboRect;
+	string renderFolder;
 	
 	ofShader cloudShader;
 	ofShader ambientShader;

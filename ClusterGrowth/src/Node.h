@@ -28,6 +28,7 @@ class Node {
 	ofxTLColorTrack* nodeColorTrack;
 	ofVboMesh* mesh;
 	
+	ofIndexType nodePointIndex;
 	ofFloatColor lineColor;
 	ofFloatColor nodeColor;
 	bool targeted;
@@ -39,6 +40,7 @@ class Node {
 	ofVec3f position;
 	bool terminated;
 	bool leaf;
+	int numConnections;
 	
 	float actualDistance;
 	float replicatePointSize;

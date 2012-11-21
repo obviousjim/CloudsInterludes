@@ -30,8 +30,6 @@ void testApp::setup(){
 	gui.add(minDistance.setup("min branch dist", ofxParameter<float>(), 10, 1000));
 	gui.add(distanceRange.setup("branch dist rng", ofxParameter<float>(), 0, 3.0));
 	gui.add(stepSize.setup("step size", ofxParameter<float>(), 1, 300));
-//	gui.add(numPointsAtReplicate.setup("points at replicate",ofxParameter<int>(), 10, 1000));
-//	gui.add(replicatePointDistance.setup("replicate distance",ofxParameter<float>(), 5, 500));
 	gui.add(replicatePointSize.setup("replicate point size",ofxParameter<float>(), 1, 50));
 
 	gui.add(lineThickness.setup("line thickness", ofxParameter<float>(), 1, 10));
@@ -62,9 +60,11 @@ void testApp::setup(){
 	timeline.setDurationInFrames(25*24);
 	timeline.addTrack("camera", &camTrack);
 	timeline.addCurves("node bounce");
-	timeline.addCurves("node size", ofRange(1, 100), 20);
+	timeline.addCurves("all node size", ofRange(1, 10), 2);
+	timeline.addCurves("traversed node size", ofRange(1, 10), 2);
 	timeline.addCurves("line focal dist", ofRange(0, sqrt(3000)),  100);
 	timeline.addCurves("line focal range", ofRange(0, sqrt(3000)),  100);
+	timeline.addCurves("line width", ofRange(.5, 2.0),  100);
 	
 	lineColor = timeline.addColors("line color");
 	timeline.addColorsWithPalette("node color", "nerve_palette.png");
@@ -103,6 +103,7 @@ void testApp::loadShader(){
 
 //--------------------------------------------------------------
 void testApp::update(){
+	
 	if(!ofGetMousePressed(0)){
 		timeline.setOffset(ofVec2f(0,ofGetHeight()-timeline.getHeight()));
 	}
@@ -117,10 +118,13 @@ void testApp::update(){
 //	gui.add(lineStartTime.setup("line start", ofxParameter<float>(), 0, 1.0));
 //	gui.add(lineEndTime.setup("line end", ofxParameter<float>(), 0, 1.0));
 //	gui.add(lineFadeVerts.setup("line fade verts", ofxParameter<int>(), 1, 10));
+	
 
+	
 	int vertEndIndex = ofMap(timeline.getPercentComplete(), lineStartTime, lineEndTime, 0, traversal.getVertices().size());
 	int vertsToHighlight = ofClamp(vertEndIndex,0,traversal.getVertices().size()-1);
-	float nodeSize = timeline.getValue("node size");
+	
+	float nodeSize = timeline.getValue("traversed node size");
 	for(int i = 0; i < vertsToHighlight; i++){;
 //		float fade = ofMap(i, vertsToHighlight*.9, vertsToHighlight, 1.0, 0, true);
 		float alpha = ofMap(i, vertEndIndex, vertEndIndex-nodePopLength, 0.0, 1.0, true);
@@ -130,7 +134,7 @@ void testApp::update(){
 			//traversedNodePoints.getNormals()[ traversalIndexToNodeIndex[i ] ].x = 1.0;
 //			cout << "setting color of  line point " << i << " to node index " << endl;
 			traversedNodePoints.getNormals()[ traversalIndexToNodeIndex[i ] ].x = nodeSize*timeline.getValueAtPercent("node bounce", alpha);
-			traversedNodePoints.getColors()[ traversalIndexToNodeIndex[i ] ] = currentColor;
+			traversedNodePoints.getColors()[  traversalIndexToNodeIndex[i ] ] = currentColor;
 		}
 	}
 	
@@ -139,6 +143,17 @@ void testApp::update(){
 		if(traversalIndexToNodeIndex.find(i) != traversalIndexToNodeIndex.end()){
 			traversedNodePoints.getNormals()[ traversalIndexToNodeIndex[i ] ].x = 0.0;
 		}
+	}
+	
+	vector<ofVec3f>& normals = nodeCloudPoints.getNormals();
+	for(int i = 0; i < nodes.size(); i++){
+		if(nodePointIndex
+		normals[ nodes[i]->nodePointIndex ]
+	}
+	
+
+	for(int i = 0; i < normals.size(); i++){
+		normals[i].x =
 	}
 }
 
@@ -168,7 +183,7 @@ void testApp::draw(){
 
 	ofSetColor(255);
 	
-	ofSetLineWidth(	lineThickness );
+	ofSetLineWidth(	timeline.getValue("line width") );
 	lineAttenuate.begin();
 	lineAttenuate.setUniform1f("focalPlane", powf(timeline.getValue("line focal dist"),2));
 	lineAttenuate.setUniform1f("focalRange", powf(timeline.getValue("line focal range"),2));

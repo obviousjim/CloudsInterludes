@@ -1,0 +1,50 @@
+<positions>
+    <element name="cam">
+        <x>0.000000000</x>
+        <y>834.000000000</y>
+        <width>1920.000000000</width>
+        <height>28.000000000</height>
+    </element>
+    <element name="notes">
+        <x>0.000000000</x>
+        <y>898.000000000</y>
+        <width>1920.000000000</width>
+        <height>22.000000000</height>
+    </element>
+    <element name="pause video">
+        <x>0.000000000</x>
+        <y>1140.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="scene">
+        <x>0.000000000</x>
+        <y>868.000000000</y>
+        <width>1920.000000000</width>
+        <height>24.000000000</height>
+    </element>
+    <element name="x offset">
+        <x>0.000000000</x>
+        <y>1035.000000000</y>
+        <width>1920.000000000</width>
+        <height>53.000000000</height>
+    </element>
+    <element name="x shift">
+        <x>0.000000000</x>
+        <y>926.000000000</y>
+        <width>1920.000000000</width>
+        <height>50.000000000</height>
+    </element>
+    <element name="y shift">
+        <x>0.000000000</x>
+        <y>982.000000000</y>
+        <width>1920.000000000</width>
+        <height>47.000000000</height>
+    </element>
+    <element name="z offset">
+        <x>0.000000000</x>
+        <y>1094.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+</positions>

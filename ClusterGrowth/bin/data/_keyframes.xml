@@ -164,21 +164,21 @@
         <oz>-0.074698821</oz>
         <ow>0.906451523</ow>
         <easein>0</easein>
-        <easeout>0</easeout>
+        <easeout>1</easeout>
         <time>00:00:18:658</time>
         <value>0.000000000</value>
     </key>
     <key>
-        <px>-554.953063965</px>
-        <py>-228.219955444</py>
-        <pz>51.018222809</pz>
-        <ox>0.172206491</ox>
-        <oy>-0.623273730</oy>
-        <oz>0.142681122</oz>
-        <ow>0.749344468</ow>
-        <easein>0</easein>
+        <px>-265.625915527</px>
+        <py>-395.397949219</py>
+        <pz>81.481224060</pz>
+        <ox>0.367279649</ox>
+        <oy>-0.325772107</oy>
+        <oz>0.315313905</oz>
+        <ow>0.812130094</ow>
+        <easein>1</easein>
         <easeout>0</easeout>
-        <time>00:00:21:914</time>
+        <time>00:00:21:132</time>
         <value>0.000000000</value>
     </key>
 </keyframes>

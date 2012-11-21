@@ -1,8 +1,13 @@
 <keyframes>
     <key>
         <flag>jer 6297</flag>
-        <time>00:00:00:503</time>
-        <value>0.433334351</value>
+        <time>00:00:00:005</time>
+        <value>0.141667664</value>
+    </key>
+    <key>
+        <flag>jer 6497</flag>
+        <time>00:00:05:480</time>
+        <value>0.458333313</value>
     </key>
     <key>
         <flag>sofy 9225</flag>

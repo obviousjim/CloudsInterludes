@@ -152,10 +152,22 @@ void testApp::setup(){
 
 void testApp::generateAmbientParticles(){
 	ambientParticles.clear();
+	/*
 	for(int i = 0; i < numAmbientParticles; i++){
 		ambientParticles.addVertex(ofVec3f(ofRandom(-particleBoxWidth, particleBoxWidth),
 										   ofRandom(-particleBoxHeight, particleBoxHeight),
 										   ofRandom(0, particleBoxDepth)));
+	}
+	 */
+	
+	int partcleBoxStepSize = 50;
+	for(int z = 0; z < particleBoxDepth; z+=partcleBoxStepSize){
+		for(int y = -particleBoxHeight; y < particleBoxHeight; y+=partcleBoxStepSize){
+			for(int x = -particleBoxWidth; x < particleBoxWidth; x+=partcleBoxStepSize){
+				ambientParticles.addVertex(ofVec3f(x,y,z) + ofVec3f(ofRandomf(),ofRandomf(),ofRandomf())*2);
+				ambientParticles.addColor(ofFloatColor(1));
+			}
+		}
 	}
 }
 
@@ -190,7 +202,6 @@ void testApp::generateSubClusters(ofVec3f center, int maxSubs, float maxRadius){
 	}
 	 
 	 */
-	
 }
 
 //--------------------------------------------------------------
@@ -206,6 +217,7 @@ void testApp::bangFired(ofxTLBangEventArgs& bang){
 		{
 			
 			player.getVideoPlayer()->setFrame(ofToInt(parts[1]));
+			player.update();
 			if(!supressPlay){
 				player.getVideoPlayer()->play();
 			}
@@ -319,8 +331,6 @@ void testApp::update(){
 	
 //	updateParticleSystem();
 //	updatePerlinLuminosity();
-
-	
 }
 
 //--------------------------------------------------------------
@@ -369,9 +379,9 @@ void testApp::updatePerlinLuminosity(){
 	for(int i = 0; i < meshBuilder.validVertIndices.size(); i++){
 		
 		ofVec3f& vert = verts[ meshBuilder.validVertIndices[i] ];
-		float alpha = ofNoise(vert.x/luminDensity+luminosityChannel,
+		float alpha = ofNoise((timeline.getValue("x offset")+vert.x)/luminDensity+luminosityChannel,
 							  vert.y/luminDensity+luminosityChannel,
-							  vert.z/luminDensity+luminosityChannel);
+							  (timeline.getValue("z offset")+vert.z)/luminDensity+luminosityChannel);
 		//		alpha = (alpha - luminMid) * luminContrast + luminMid;
 		alpha = ofClamp((alpha - luminMid) * luminContrast + luminMid, 0, 1.0);
 		//alpha = ofClamp(1 - powf(alpha, luminExponent), 0, 1.0);
@@ -382,6 +392,24 @@ void testApp::updatePerlinLuminosity(){
 			added++;
 			colors[ meshBuilder.validVertIndices[i] ] = ofFloatColor(alpha);
 		}
+	}
+
+	vector<ofVec3f>& ambientVerts = ambientParticles.getVertices();
+	vector<ofFloatColor>& ambientColors =  ambientParticles.getColors();
+	
+	for(int i = 0; i < ambientVerts.size(); i++){
+		ofVec3f& vert = ambientVerts[ i ];
+		
+		float alpha = ofNoise(vert.x/luminDensity+luminosityChannel,
+							  -1.*vert.y/luminDensity+luminosityChannel,
+							  vert.z/luminDensity+luminosityChannel);
+		//		alpha = (alpha - luminMid) * luminContrast + luminMid;
+		//alpha = ofClamp((alpha - luminMid) * luminContrast + luminMid, 0, 1.0);
+		//alpha = ofClamp(1 - powf(alpha, luminExponent), 0, 1.0);
+		alpha = ofClamp(powf(alpha, luminExponent), luminMin, 1.0);
+		
+		alpha *= particleFade;
+		ambientColors[i] = ofFloatColor(alpha);
 	}
 }
 
@@ -399,21 +427,26 @@ void testApp::draw(){
 		drawGeometry();
 	}
 
+	ofPushMatrix();
+//	ofScale(1,-1,1);
+
 	ambientShader.begin();
-//	uniform float maxSize;
-//	uniform float maxDisance;
 
 	ambientShader.setUniform1f("maxDisance", particleMaxDistance) ;
 	ambientShader.setUniform1f("maxSize", particeMaxSize) ;
 
+	ofEnableBlendMode(OF_BLENDMODE_SCREEN);
 	ofPushStyle();
 	glPointSize(3.0);
 	ofSetColor(particleFade*255);
+//	ambientParticles.setMode(OF_PRIMITIVE_LINES);
+//	ambientParticles.draw();
 	ambientParticles.drawVertices();
-
 	ofPopStyle();
 	ambientShader.end();
 
+	ofPopMatrix();
+	
 //	randomUnits.drawVertices();
 //	clusters.drawVertices();
 
@@ -436,7 +469,7 @@ void testApp::draw(){
 		renderTarget.readToPixels(saveImage.getPixelsRef());
 		saveImage.mirror(true, false);
 		char filename[1024];
-		sprintf(filename, "frames/frame_%05d.png", currentFrameNumber);
+		sprintf(filename, "%sframe_%05d.png",renderFolder.c_str(), currentFrameNumber);
 		saveImage.saveImage(filename);
 		currentFrameNumber++;
 		
@@ -472,11 +505,18 @@ void testApp::drawGeometry(){
 
 	if(drawWireframe && wireAlpha > 0){
 
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glEnable(GL_CULL_FACE);
+
+		glCullFace(GL_FRONT);
+
 		ofTranslate(0,0,-.5);
 		ofSetColor(255*wireAlpha);
 		thickness *= thickness;
 		ofSetLineWidth(thickness);
 		meshBuilder.getMesh().drawWireframe();
+		
+		glPopAttrib();
 	}
 	
 	if(drawPointcloud && pointAlpha > 0){
@@ -528,6 +568,7 @@ void testApp::loadShader(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
+	
 	if(timeline.isModal()){
 		return;
 	}
@@ -550,6 +591,13 @@ void testApp::keyPressed(int key){
 	if(key == 'R'){
 		rendering = !rendering;
 		
+		if(rendering){
+			char fileName[1024];
+			sprintf(fileName, "frame_%02d_%02d_%02d/", ofGetDay(), ofGetHours(), ofGetMinutes() );
+			renderFolder = string(fileName);
+			ofDirectory(renderFolder).create(true);
+		}
+
 		timeline.stop();
 		player.getVideoPlayer()->stop();
 		timeline.setPercentComplete(timeline.getInOutRange().min);

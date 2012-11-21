@@ -1,0 +1,15 @@
+<xshift>-0.002999991</xshift>
+<yshift>0.106500000</yshift>
+<simplify>4</simplify>
+<draw_wireframe>0</draw_wireframe>
+<draw_pointcloud>0</draw_pointcloud>
+<draw_particles>1</draw_particles>
+<supress_play>1</supress_play>
+<num_ambient>87282</num_ambient>
+<ap_box_width>850</ap_box_width>
+<ap_box_height>950</ap_box_height>
+<ap_box_depth>3105</ap_box_depth>
+<max_particle_distance>1000.000000000</max_particle_distance>
+<max_particle_size>3.050000191</max_particle_size>
+<particle_alpha>0.000000000</particle_alpha>
+<freeze_particles>1</freeze_particles>

@@ -22,6 +22,8 @@ Node::Node(){
 	endIndex = 0;
 	endEnergy = startEnergy = 0;
 	targeted = false;
+	numConnections = 0;
+	nodePointIndex = -1;
 }
 
 void Node::replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints, vector<ofVec3f>& fuseDistances){
@@ -187,6 +189,7 @@ void Node::replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints, vecto
 		
 		if(terminationNode != NULL){
 			n->terminate();
+			terminationNode->numConnections++;
 			//terminationNode->terminate();
 			//break;
 		}
@@ -204,9 +207,10 @@ void Node::replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints, vecto
 	
 	//JUST ONE NODE
 	ofVec3f point = position;
+	nodePointIndex = fusePoints.size();
 	fusePoints.push_back(point);
 	float spriteSize = 1.0;
-	fuseDistances.push_back(ofVec3f(spriteSize*(numIterations-generation),0,0));
+	fuseDistances.push_back(ofVec3f(spriteSize,0,0));
 	
 	for(int i = 0; i < allNodes.size(); i++){
 		allNodes[i]->targeted = false;

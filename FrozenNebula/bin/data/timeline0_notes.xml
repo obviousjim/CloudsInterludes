@@ -1,0 +1,17 @@
+<keyframes>
+    <key>
+        <flag>start</flag>
+        <time>00:00:09:930</time>
+        <value>0.454545438</value>
+    </key>
+    <key>
+        <flag>end</flag>
+        <time>00:00:20:775</time>
+        <value>0.106817067</value>
+    </key>
+    <key>
+        <flag>sofy finishes</flag>
+        <time>00:00:32:753</time>
+        <value>0.727272749</value>
+    </key>
+</keyframes>

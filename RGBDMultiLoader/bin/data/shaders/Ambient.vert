@@ -7,7 +7,7 @@ const float PI = 3.14159265;
 
 void main() {
 	//get the homogeneous 2d position
-  	//gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+  	//gl_Position = gl_ModelViewProjectionMatrix * (gl_Vertex + ;
 	// use the distance from the camera and aperture to determine the radius
 	// the +1 is because point sizes <1 are rendered differently than those >1
   	//gl_PointSize = min(maxSize, abs(gl_Position.z - focalDistance) * aperture + 1.);
@@ -19,13 +19,21 @@ void main() {
     //gl_FrontColor.a = 1.0 - (gl_PointSize - minSize) / (maxSize - minSize);
 	//gl_TexCoord[0] = gl_MultiTexCoord0;
 
-	gl_Position = ftransform();
+	gl_Position = gl_ModelViewProjectionMatrix * (gl_Vertex + vec4(-pow(gl_Color.r,1.5)*10., pow(gl_Color.r,1.5)*25.,pow(gl_Color.r,2.0)*10., 0.0) );
+
+	//gl_Position = ftransform();
+//	gl_Position.y += gl_Color.r*10.;
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 	gl_FrontColor = gl_Color;
 	float fade = max(maxDisance - gl_Position.z, 0.) / maxDisance;
-	gl_FrontColor.a = fade;
-	gl_PointSize = fade * maxSize;
+	fade *= max(gl_Position.z - 100., 0.0) / 100.0;
+	gl_PointSize = fade * maxSize * max(gl_Color.r-.3, 0.0)*3.;
+	gl_FrontColor.a = fade;// * max(gl_Color.r-.5, 0.); // * max(1.-gl_PointSize/2.0, 0.0);
+//	if(gl_PointSize > 2.){
+//		gl_FrontColor.a *= max(gl_PointSize-1., 0.);
+//	}
 	
+	//gl_PointSize = gl_Color.a*1.0;
     //float scale = min(1.0, abs(gl_Position.z - focalDistance) / focalRange);
     //gl_PointSize = scale * (maxSize - minSize) + minSize;
 //	gl_FrontColor = gl_Color;

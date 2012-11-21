@@ -1,0 +1,56 @@
+<positions>
+    <element name="birth rate">
+        <x>0.000000000</x>
+        <y>1048.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="life span">
+        <x>0.000000000</x>
+        <y>1094.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="life span var">
+        <x>0.000000000</x>
+        <y>1140.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="particle fade">
+        <x>0.000000000</x>
+        <y>789.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="particle focal distance">
+        <x>0.000000000</x>
+        <y>956.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="particle focal range">
+        <x>0.000000000</x>
+        <y>1002.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="particle size">
+        <x>0.000000000</x>
+        <y>1002.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="particle size max">
+        <x>0.000000000</x>
+        <y>835.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="particle size min">
+        <x>0.000000000</x>
+        <y>881.000000000</y>
+        <width>1920.000000000</width>
+        <height>69.000000000</height>
+    </element>
+</positions>
