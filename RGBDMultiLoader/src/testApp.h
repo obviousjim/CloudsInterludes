@@ -89,7 +89,8 @@ class testApp : public ofBaseApp{
 	
 	ofShader cloudShader;
 	ofShader ambientShader;
-
+	ofImage crossSprite;
+	
 	ofImage saveImage;
 	bool rendering;
 	int currentFrameNumber;

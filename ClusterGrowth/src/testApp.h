@@ -89,9 +89,10 @@ class testApp : public ofBaseApp {
 	
 	void traverse();
 	void generate();
-	
+	ofVec3f trailHead;
 	ofShader billboard;
 	ofShader lineAttenuate;
+
 	ofShader gaussianBlur;
 	string renderFolder;
 	ofImage nodeSprite;

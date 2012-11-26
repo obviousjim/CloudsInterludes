@@ -24,6 +24,7 @@ Node::Node(){
 	targeted = false;
 	numConnections = 0;
 	nodePointIndex = -1;
+
 }
 
 void Node::replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints, vector<ofVec3f>& fuseDistances){
@@ -80,7 +81,7 @@ void Node::replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints, vecto
 		
 		float alpha = .2;
 		//blank vertices befor and after
-		mesh->addColor(ofFloatColor(0));
+		mesh->addColor(ofFloatColor(0,0,0,0));
 		mesh->addVertex(position);
 
 		n->startIndex = mesh->getNumVertices();
@@ -184,7 +185,7 @@ void Node::replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints, vecto
 		newNodes.push_back(n);
 		allNodes.push_back(n);
 		
-		mesh->addColor(ofFloatColor(0));
+		mesh->addColor(ofFloatColor(0,0,0,0));
 		mesh->addVertex(n->position);
 		
 		if(terminationNode != NULL){
@@ -207,10 +208,11 @@ void Node::replicate(vector<Node*>& allNodes, vector<ofVec3f>& fusePoints, vecto
 	
 	//JUST ONE NODE
 	ofVec3f point = position;
-	nodePointIndex = fusePoints.size();
 	fusePoints.push_back(point);
+
 	float spriteSize = 1.0;
-	fuseDistances.push_back(ofVec3f(spriteSize,0,0));
+	nodePointIndex = fuseDistances.size();
+	fuseDistances.push_back(ofVec3f(1.0,numIterations,generation));
 	
 	for(int i = 0; i < allNodes.size(); i++){
 		allNodes[i]->targeted = false;

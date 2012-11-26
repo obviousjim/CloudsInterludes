@@ -57,15 +57,15 @@ void testApp::setup(){
 
 	timeline.setFrameRate(24);
 	timeline.setFrameBased(true);
-	timeline.setDurationInFrames(25*24);
+	timeline.setDurationInFrames(30*24);
 	timeline.addTrack("camera", &camTrack);
 	timeline.addCurves("node bounce");
-	timeline.addCurves("all node size", ofRange(1, 10), 2);
+	timeline.addCurves("cluster node size", ofRange(1, 10), 2);
 	timeline.addCurves("traversed node size", ofRange(1, 10), 2);
 	timeline.addCurves("line focal dist", ofRange(0, sqrt(3000)),  100);
 	timeline.addCurves("line focal range", ofRange(0, sqrt(3000)),  100);
 	timeline.addCurves("line width", ofRange(.5, 2.0),  100);
-	
+	timeline.addCurves("line dissolve");
 	lineColor = timeline.addColors("line color");
 	timeline.addColorsWithPalette("node color", "nerve_palette.png");
 	//timeline.addColors("node color");
@@ -119,17 +119,21 @@ void testApp::update(){
 //	gui.add(lineEndTime.setup("line end", ofxParameter<float>(), 0, 1.0));
 //	gui.add(lineFadeVerts.setup("line fade verts", ofxParameter<int>(), 1, 10));
 	
-
-	
 	int vertEndIndex = ofMap(timeline.getPercentComplete(), lineStartTime, lineEndTime, 0, traversal.getVertices().size());
 	int vertsToHighlight = ofClamp(vertEndIndex,0,traversal.getVertices().size()-1);
+	int lineDissolveVerts = vertEndIndex*timeline.getValue("line dissolve");
 	
-	float nodeSize = timeline.getValue("traversed node size");
+	float nodeSize = powf(timeline.getValue("traversed node size"), 2);
 	for(int i = 0; i < vertsToHighlight; i++){;
 //		float fade = ofMap(i, vertsToHighlight*.9, vertsToHighlight, 1.0, 0, true);
 		float alpha = ofMap(i, vertEndIndex, vertEndIndex-nodePopLength, 0.0, 1.0, true);
+		float dissolveAlpha = 1.0;
+		if(lineDissolveVerts > 0){
+			dissolveAlpha = ofMap(i, lineDissolveVerts, lineDissolveVerts+20, 0.0, 1.0, true);
+		}
+		
 		ofFloatColor currentColor = lineColor->getColorAtPosition(alpha);
-		traversal.setColor(i, currentColor);
+		traversal.setColor(i, currentColor * dissolveAlpha);
 		if(traversalIndexToNodeIndex.find(i) != traversalIndexToNodeIndex.end()){
 			//traversedNodePoints.getNormals()[ traversalIndexToNodeIndex[i ] ].x = 1.0;
 //			cout << "setting color of  line point " << i << " to node index " << endl;
@@ -145,15 +149,17 @@ void testApp::update(){
 		}
 	}
 	
+	if(traversal.getVertices().size() > 0){
+		trailHead = traversal.getVertices()[vertsToHighlight];
+	}
+
+	
+	float clusterNodeBaseSize = timeline.getValue("cluster node size");
 	vector<ofVec3f>& normals = nodeCloudPoints.getNormals();
 	for(int i = 0; i < nodes.size(); i++){
-		if(nodePointIndex
-		normals[ nodes[i]->nodePointIndex ]
-	}
-	
-
-	for(int i = 0; i < normals.size(); i++){
-		normals[i].x =
+		if(nodes[i]->nodePointIndex != -1){
+			normals[ nodes[i]->nodePointIndex ].x = (normals[ nodes[i]->nodePointIndex ].y - normals[ nodes[i]->nodePointIndex ].z)* clusterNodeBaseSize;
+		}
 	}
 }
 
@@ -188,6 +194,8 @@ void testApp::draw(){
 	lineAttenuate.setUniform1f("focalPlane", powf(timeline.getValue("line focal dist"),2));
 	lineAttenuate.setUniform1f("focalRange", powf(timeline.getValue("line focal range"),2));
 	lineAttenuate.setUniform1f("lineFade", lineAlpha);
+	lineAttenuate.setUniform3f("attractor", trailHead.x, trailHead.y, trailHead.z);
+	lineAttenuate.setUniform1f("radius", 300.);
 	
 	geometry.setMode(OF_PRIMITIVE_LINE_STRIP);
 	geometry.draw();
@@ -207,6 +215,8 @@ void testApp::draw(){
 	
 	//glPointSize(replicatePointSize);
 	billboard.setUniform1f("minSize", replicatePointSize);
+	billboard.setUniform3f("attractor", trailHead.x, trailHead.y, trailHead.z);
+	billboard.setUniform1f("radius", 300.);
 	
 	nodeCloudPoints.drawVertices();
 	nodeSpriteBasic.getTextureReference().unbind();
@@ -348,7 +358,9 @@ void testApp::traverse(){
 	for(int i = 0; i < nodes.size(); i++){
 		for(int j = 0; j < nodes.size(); j++){
 			float dist = nodes[i]->position.distanceSquared(nodes[j]->position);
-			if( i!=j && dist > maxDistance ){
+			if( i!=j && dist > maxDistance &&
+			   nodes[j]->replicated && nodes[j]->numConnections > 4 &&
+			   nodes[i]->replicated && nodes[i]->numConnections > 4){
 				maxDistance = dist;
 				n1 = nodes[j];
 				n2 = nodes[i];

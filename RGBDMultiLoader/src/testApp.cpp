@@ -49,6 +49,7 @@ void testApp::setup(){
 
 	timeline.setPageName("Camera");
 	timeline.addTrack("cam", &camTrack);
+	timeline.addCurves("cam damp");
 	timeline.addFlags("scene");
 	timeline.addFlags("notes");
 	timeline.addCurves("x shift", ofRange(-.15,.15), 0);
@@ -148,7 +149,6 @@ void testApp::setup(){
 	
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);	// allows per-point size
 }
-
 
 void testApp::generateAmbientParticles(){
 	ambientParticles.clear();
@@ -276,6 +276,7 @@ void testApp::update(){
 		timeline.setOffset(ofVec2f(0,ofGetHeight()-timeline.getHeight()));
 	}
 	
+	camTrack.setDampening(timeline.getValue("cam damp"));
 	ofRectangle fboContainer = ofRectangle(0,0,ofGetWidth()-250,timeline.getTopLeft().y);
 	
 	fboRect = ofRectangle(0,0,16,9);
@@ -399,10 +400,10 @@ void testApp::updatePerlinLuminosity(){
 	
 	for(int i = 0; i < ambientVerts.size(); i++){
 		ofVec3f& vert = ambientVerts[ i ];
-		
-		float alpha = ofNoise(vert.x/luminDensity+luminosityChannel,
-							  -1.*vert.y/luminDensity+luminosityChannel,
-							  vert.z/luminDensity+luminosityChannel);
+		float luminChannel =luminosityChannel*2.;
+		float alpha = ofNoise(vert.x/luminDensity+luminChannel,
+							  -1.*vert.y/luminDensity+luminChannel,
+							  vert.z/luminDensity+luminChannel);
 		//		alpha = (alpha - luminMid) * luminContrast + luminMid;
 		//alpha = ofClamp((alpha - luminMid) * luminContrast + luminMid, 0, 1.0);
 		//alpha = ofClamp(1 - powf(alpha, luminExponent), 0, 1.0);
@@ -429,9 +430,24 @@ void testApp::draw(){
 
 	ofPushMatrix();
 //	ofScale(1,-1,1);
-
+	ofTranslate(timeline.getValue("x offset"), 0, timeline.getValue("z offset"));
+	glEnable(GL_DEPTH_TEST);
+	ofEnableBlendMode(OF_BLENDMODE_SCREEN);
+	
+	ofSetColor(0);
+	ofPushMatrix();
+	ofScale(1, -1, 1);
+	meshBuilder.getMesh().disableColors();
+	meshBuilder.getMesh().draw();
+	meshBuilder.getMesh().enableColors();
+	ofPopMatrix();
+	ofSetColor(255);
+	
 	ambientShader.begin();
-
+	ofEnablePointSprites();
+	ofDisableArbTex();
+	crossSprite.getTextureReference().bind();
+	
 	ambientShader.setUniform1f("maxDisance", particleMaxDistance) ;
 	ambientShader.setUniform1f("maxSize", particeMaxSize) ;
 
@@ -439,11 +455,15 @@ void testApp::draw(){
 	ofPushStyle();
 	glPointSize(3.0);
 	ofSetColor(particleFade*255);
-//	ambientParticles.setMode(OF_PRIMITIVE_LINES);
-//	ambientParticles.draw();
 	ambientParticles.drawVertices();
 	ofPopStyle();
 	ambientShader.end();
+
+	crossSprite.getTextureReference().unbind();
+	
+	glDisable(GL_DEPTH_TEST);
+	ofDisablePointSprites();
+	ofEnableArbTex();
 
 	ofPopMatrix();
 	
@@ -542,9 +562,7 @@ void testApp::drawGeometry(){
 		cloudShader.end();
 	}
 	
-	
 	player.getVideoPlayer()->getTextureReference().unbind();
-	
 	
 	if(justLoadedNewScene){
 		cout << "RENDERED FIRST FRAME OF " << player.getVideoPlayer()->getCurrentFrame() << endl;
@@ -562,6 +580,10 @@ void testApp::loadShader(){
 	cloudShader.begin();
 	cloudShader.setUniform1i("tex0", 0 );
 	cloudShader.end();
+
+	ofDisableArbTex();
+	crossSprite.loadImage("shaders/cross.png");
+	ofEnableArbTex();
 	
 	ambientShader.load("shaders/Ambient");
 }

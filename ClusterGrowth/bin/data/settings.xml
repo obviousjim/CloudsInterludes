@@ -1,11 +1,11 @@
 <hero_nodes>15</hero_nodes>
 <hero_spawn_radius>995.025024414</hero_spawn_radius>
 <num_iterations>6</num_iterations>
-<num_branches>5</num_branches>
+<num_branches>6</num_branches>
 <min_branch_dist>396.099975586</min_branch_dist>
 <branch_dist_rng>1.110000014</branch_dist_rng>
 <step_size>6.980000019</step_size>
-<spawn_radius>84.599998474</spawn_radius>
+<spawn_radius>169.175003052</spawn_radius>
 <radius_var>482.599975586</radius_var>
 <min_attract_radius>594.099975586</min_attract_radius>
 <min_repel_radius>1000.000000000</min_repel_radius>
@@ -21,9 +21,9 @@
 <line_thickness>3.069999933</line_thickness>
 <travers_node_weight>4.869999886</travers_node_weight>
 <traverse_step>0.680000007</traverse_step>
-<seed>27</seed>
-<line_start>0.064999998</line_start>
-<line_end>0.639999986</line_end>
+<seed>13</seed>
+<line_start>0.045000002</line_start>
+<line_end>0.574999988</line_end>
 <line_fade_verts>2</line_fade_verts>
 <node_pop_length>284</node_pop_length>
 <line_alpha>0.389999986</line_alpha>

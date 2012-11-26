@@ -1,7 +1,13 @@
 <positions>
     <element name="camera">
         <x>0.000000000</x>
-        <y>840.000000000</y>
+        <y>731.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="cluster node size">
+        <x>0.000000000</x>
+        <y>826.000000000</y>
         <width>1920.000000000</width>
         <height>40.000000000</height>
     </element>
@@ -11,29 +17,35 @@
         <width>1920.000000000</width>
         <height>40.000000000</height>
     </element>
-    <element name="line focal dist">
-        <x>0.000000000</x>
-        <y>964.000000000</y>
-        <width>1920.000000000</width>
-        <height>40.000000000</height>
-    </element>
-    <element name="line focal range">
-        <x>0.000000000</x>
-        <y>1010.000000000</y>
-        <width>1920.000000000</width>
-        <height>32.000000000</height>
-    </element>
-    <element name="line width">
+    <element name="line dissolve">
         <x>0.000000000</x>
         <y>1048.000000000</y>
         <width>1920.000000000</width>
         <height>40.000000000</height>
     </element>
+    <element name="line focal dist">
+        <x>0.000000000</x>
+        <y>918.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
+    <element name="line focal range">
+        <x>0.000000000</x>
+        <y>964.000000000</y>
+        <width>1920.000000000</width>
+        <height>32.000000000</height>
+    </element>
+    <element name="line width">
+        <x>0.000000000</x>
+        <y>1002.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
+    </element>
     <element name="node bounce">
         <x>0.000000000</x>
-        <y>886.000000000</y>
+        <y>777.000000000</y>
         <width>1920.000000000</width>
-        <height>22.000000000</height>
+        <height>43.000000000</height>
     </element>
     <element name="node color">
         <x>0.000000000</x>
@@ -46,5 +58,11 @@
         <y>914.000000000</y>
         <width>1920.000000000</width>
         <height>44.000000000</height>
+    </element>
+    <element name="traversed node size">
+        <x>0.000000000</x>
+        <y>872.000000000</y>
+        <width>1920.000000000</width>
+        <height>40.000000000</height>
     </element>
 </positions>
