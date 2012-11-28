@@ -614,6 +614,7 @@ void testApp::keyPressed(int key){
 		rendering = !rendering;
 		
 		if(rendering){
+			currentFrameNumber = 0;
 			char fileName[1024];
 			sprintf(fileName, "frame_%02d_%02d_%02d/", ofGetDay(), ofGetHours(), ofGetMinutes() );
 			renderFolder = string(fileName);
